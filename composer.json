@@ -31,12 +31,12 @@
         ]
     },
     "extra": {
-        "brown": {
+        "think": {
             "services": [
                 "brown\\Service"
             ],
             "config": {
-                "brown": "src/config/swoole.php"
+                "swoole": "src/config/swoole.php"
             }
         }
     },
