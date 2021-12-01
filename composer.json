@@ -1,6 +1,7 @@
 {
     "name": "brown-rpc/brown-rpc",
     "description": "rpc",
+    "type": "composer-plugin",
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
@@ -10,8 +11,8 @@
         "stechstudio/backoff": "^1.2",
         "swoole/ide-helper": "^4.3",
         "symfony/finder": "^4.3.2|^5.1",
-        "topthink/framework": "^6.0"
-
+        "topthink/framework": "^6.0",
+        "composer-plugin-api": "1.0.0"
     },
     "license": "Apache-2.0",
     "authors": [
