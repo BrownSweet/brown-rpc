@@ -1,7 +1,6 @@
 {
     "name": "brown-rpc/brown-rpc",
     "description": "rpc",
-    "type": "composer-plugin",
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
