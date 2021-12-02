@@ -26,9 +26,9 @@ class Server extends Command
     {
         $this->checkEnvironment();
 
-        $this->output->writeln('Starting swoole server...');
+        $this->output->writeln('启动 swoole 服务');
 
-        $this->output->writeln('You can exit with <info>`CTRL-C`</info>');
+        $this->output->writeln('按下 <info>`CTRL-C`</info>停止服务');
 
         $manager->start();
     }
