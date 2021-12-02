@@ -3,38 +3,9 @@
 use brown\websocket\socketio\Handler;
 
 return [
-    'http'       => [
-        'enable'     => true,
-        'host'       => '0.0.0.0',
-        'port'       => 80,
-        'worker_num' => swoole_cpu_num(),
-    ],
-    'websocket'  => [
-        'enable'        => false,
-        'handler'       => Handler::class,
-        'ping_interval' => 25000,
-        'ping_timeout'  => 60000,
-        'room'          => [
-            'type'  => 'table',
-            'table' => [
-                'room_rows'   => 4096,
-                'room_size'   => 2048,
-                'client_rows' => 8192,
-                'client_size' => 2048,
-            ],
-            'redis' => [
-                'host'          => '127.0.0.1',
-                'port'          => 6379,
-                'max_active'    => 3,
-                'max_wait_time' => 5,
-            ],
-        ],
-        'listen'        => [],
-        'subscribe'     => [],
-    ],
     'rpc'        => [
         'server' => [
-            'enable'     => false,
+            'enable'     => true,
             'host'       => '0.0.0.0',
             'port'       => 9000,
             'worker_num' => swoole_cpu_num(),
@@ -69,6 +40,36 @@ return [
         ],
         //自定义连接池
     ],
+    'http'       => [
+        'enable'     => false,
+        'host'       => '0.0.0.0',
+        'port'       => 80,
+        'worker_num' => swoole_cpu_num(),
+    ],
+    'websocket'  => [
+        'enable'        => false,
+        'handler'       => Handler::class,
+        'ping_interval' => 25000,
+        'ping_timeout'  => 60000,
+        'room'          => [
+            'type'  => 'table',
+            'table' => [
+                'room_rows'   => 4096,
+                'room_size'   => 2048,
+                'client_rows' => 8192,
+                'client_size' => 2048,
+            ],
+            'redis' => [
+                'host'          => '127.0.0.1',
+                'port'          => 6379,
+                'max_active'    => 3,
+                'max_wait_time' => 5,
+            ],
+        ],
+        'listen'        => [],
+        'subscribe'     => [],
+    ],
+
     'tables'     => [],
     //每个worker里需要预加载以共用的实例
     'concretes'  => [],
