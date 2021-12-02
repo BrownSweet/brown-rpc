@@ -3,8 +3,20 @@
 use brown\websocket\socketio\Handler;
 
 return [
+    'rpc'        => [
+        'server' => [
+            'enable'     => true,
+            'host'       => '0.0.0.0',
+            'port'       => 9000,
+            'worker_num' => swoole_cpu_num(),
+            'services'   => [
+            ],
+        ],
+        'client' => [
+        ],
+    ],
     'http'       => [
-        'enable'     => true,
+        'enable'     => false,
         'host'       => '0.0.0.0',
         'port'       => 80,
         'worker_num' => swoole_cpu_num(),
@@ -32,18 +44,7 @@ return [
         'listen'        => [],
         'subscribe'     => [],
     ],
-    'rpc'        => [
-        'server' => [
-            'enable'     => false,
-            'host'       => '0.0.0.0',
-            'port'       => 9000,
-            'worker_num' => swoole_cpu_num(),
-            'services'   => [
-            ],
-        ],
-        'client' => [
-        ],
-    ],
+
     //队列
     'queue'      => [
         'enable'  => false,
