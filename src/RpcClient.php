@@ -50,7 +50,7 @@ class RpcClient
     protected $config;
     public function __construct()
     {
-        $this->app = new App();
+        $this->prepareApplication();
 
         $this->parser = new JsonParser();
     }
