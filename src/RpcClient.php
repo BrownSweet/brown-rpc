@@ -20,10 +20,10 @@ use brown\rpc\Protocol;
 use brown\rpc\Sendfile;
 
 
-class RpcClient
+class RpcClient extends Initialize
 {
     use Sendfile;
-    use Initialize;
+
 
     protected $interface;
 

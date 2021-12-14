@@ -4,7 +4,7 @@ use brown\App;
 use brown\App as SwooleApp;
 use brown\concerns\WithContainer;
 
-trait Initialize
+class Initialize extends App
 {
     use WithContainer;
     protected $app;
@@ -13,6 +13,7 @@ trait Initialize
 
     protected function prepareApplication()
     {
+
         if (!$this->app instanceof SwooleApp) {
             $this->app = new SwooleApp(parent::getRootPath());
             $this->app->bind(SwooleApp::class, \think\App::class);
