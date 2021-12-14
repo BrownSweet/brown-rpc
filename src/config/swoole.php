@@ -15,6 +15,31 @@ return [
         'client' => [
         ],
     ],
+    //队列
+    'queue'      => [
+        'enable'  => false,
+        'workers' => [],
+    ],
+    'hot_update' => [
+        'enable'  => env('APP_DEBUG', false),
+        'name'    => ['*.php'],
+        'include' => [app_path()],
+        'exclude' => [],
+    ],
+    //连接池
+    'pool'       => [
+        'db'    => [
+            'enable'        => true,
+            'max_active'    => 3,
+            'max_wait_time' => 5,
+        ],
+        'cache' => [
+            'enable'        => true,
+            'max_active'    => 3,
+            'max_wait_time' => 5,
+        ],
+        //自定义连接池
+    ],
     'http'       => [
         'enable'     => false,
         'host'       => '0.0.0.0',
@@ -45,31 +70,6 @@ return [
         'subscribe'     => [],
     ],
 
-    //队列
-    'queue'      => [
-        'enable'  => false,
-        'workers' => [],
-    ],
-    'hot_update' => [
-        'enable'  => env('APP_DEBUG', false),
-        'name'    => ['*.php'],
-        'include' => [app_path()],
-        'exclude' => [],
-    ],
-    //连接池
-    'pool'       => [
-        'db'    => [
-            'enable'        => true,
-            'max_active'    => 3,
-            'max_wait_time' => 5,
-        ],
-        'cache' => [
-            'enable'        => true,
-            'max_active'    => 3,
-            'max_wait_time' => 5,
-        ],
-        //自定义连接池
-    ],
     'tables'     => [],
     //每个worker里需要预加载以共用的实例
     'concretes'  => [],

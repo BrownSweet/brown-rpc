@@ -132,7 +132,7 @@ class RpcClient
 
         $client->close();
 
-        return $this->show(1,'suuccess',$this->decodeData($data));
+        return $this->decodeData($data);
     }
 
     protected function encodeData(Protocol $protocol)
@@ -165,36 +165,8 @@ class RpcClient
     protected function decodeData($data){
         [$handler, $data] = Packer::unpack($data);
         $result=$handler->write($data);
-//        print_r($result);
         $res=json_decode($result,true);
         return $res['result'];
-//        $decode_reult=$this->parser->decodeResponse($result);
-//        var_dump($decode_reult);
-//        echo json_encode([
-//            'status' => 1,
-//            'message' => success,
-//            'data' => $decode_reult,
-//        ],true);
-
-
-
-    }
-
-    /**
-     * 通用化API数据格式输出
-     * status  状态码，一般是0或者是1，0代表错误，1代表正确，有数据返回,-1未登录跳转登录页面
-     * message  错误信息
-     * httpStatus  描述http请求，200表示正常，404表示页面不存在，这些都可以在文件中约定
-     * data   返回数据，如果数据为空，可以使用null进行描述
-     */
-    protected function show ($status, string $message = "error",  $data = [], int $httpStatus = 200): \think\response\Json
-    {
-        $result = [
-            'status' => $status,
-            'message' => $message,
-            'data' => $data,
-        ];
-        return json($result,$httpStatus);
     }
 
 }
