@@ -1,5 +1,6 @@
 <?php
 namespace brown;
+use brown\rpc\application\Initialize;
 use Smf\ConnectionPool\ConnectionPool;
 use Swoole\Client;
 use think\App;
@@ -22,8 +23,7 @@ use brown\rpc\Sendfile;
 class RpcClient
 {
     use Sendfile;
-    use WithContainer;
-    use WithApplication;
+    use Initialize;
 
     protected $interface;
 
