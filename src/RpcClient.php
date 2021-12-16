@@ -48,28 +48,38 @@ class RpcClient extends Initialize
     protected $parameter_prefix='parameter@';
     protected $parameter;
     protected $config;
+    protected $env='';
     public function __construct()
     {
-        $this->prepareApplication();
-
         $this->parser = new JsonParser();
     }
 
     public function __call($name, $arguments)
     {
-        if ($name == 'Service') {
-            return $this->checkService($arguments);
-        } elseif ($name == 'request') {
-            return $this->checkQuest($arguments);
-        }else{
-            return $this->checkMethod($name,$arguments)->sendAndRecv();
+        switch ($name){
+            case 'Service':
+                return $this->checkService($arguments);
+                break;
+            case 'request':
+                return $this->checkQuest($arguments);
+                break;
+            default:
+
+                return $this->checkMethod($name,$arguments)->sendAndRecv();
+                break;
         }
 
 
     }
 
+    public function setEnvName($env=''){
+        $this->env=$env;
+        return $this;
+    }
+
     protected function checkService($service)
     {
+        $this->prepareApplication($this->env);
         if (file_exists($swoole_config = $this->app->getConfigPath() . 'swoole.php')) {
             $rpc_swoole_service = (array)include $swoole_config;
             if (isset($rpc_swoole_service['rpc']['client'][$service[0]])) {
@@ -82,7 +92,6 @@ class RpcClient extends Initialize
 
     protected function checkQuest($quest)
     {
-//        print_r($quest);
         if (file_exists($rpc = $this->app->getBasePath() . 'rpc.php')) {
             $rpcServices = (array) include $rpc;
             if (isset($rpcServices[$this->this_service][$this->request_prefix.$quest[0]])){
@@ -114,10 +123,6 @@ class RpcClient extends Initialize
         if (!$data instanceof \Generator) {
             $data = [$data];
         }
-        if (!$data instanceof \Generator) {
-            $data = [$data];
-        }
-
         foreach ($data as $string) {
             if (!empty($string)) {
                 if ($client->send($string) === false) {
