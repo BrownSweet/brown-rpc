@@ -2,42 +2,33 @@
 
 namespace brown;
 
-use brown\concerns\InteractsWithHttp;
-use brown\concerns\InteractsWithPools;
-use brown\concerns\InteractsWithQueue;
-use brown\concerns\InteractsWithRpcClient;
-use brown\concerns\InteractsWithRpcServer;
-use brown\concerns\InteractsWithServer;
-use brown\concerns\InteractsWithSwooleTable;
-use brown\concerns\WithApplication;
-use brown\concerns\WithContainer;
-
+use brown\server\core\Application;
+use brown\server\rpc\RpcServer;
+use brown\server\Server;
+use brown\server\update\HotUpdate;
+use brown\server\core\WorkerManger;
+use brown\server\core\Services;
 /**
  * Class Manager
  */
 class Manager
 {
-    use InteractsWithServer,
-        InteractsWithSwooleTable,
-        InteractsWithHttp,
-        InteractsWithPools,
-        InteractsWithRpcClient,
-        InteractsWithRpcServer,
-        InteractsWithQueue,
-        WithContainer,
-        WithApplication;
+    use Services;
+    use Server;
+    use RpcServer;
+    use HotUpdate;
+    use WorkerManger;
+    use Application;
 
     /**
      * Initialize.
      */
-    protected function initialize(): void
+    protected function initialize():void
     {
-        $this->prepareTables();
-        $this->preparePools();
-        $this->prepareHttp();
-        $this->prepareRpcServer();
-        $this->prepareQueue();
-        $this->prepareRpcClient();
+
+        $this->loadRpcServer();
+
     }
+
 
 }

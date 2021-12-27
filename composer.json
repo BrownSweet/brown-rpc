@@ -5,12 +5,13 @@
         "php": ">=7.4",
         "ext-json": "*",
         "ext-swoole": ">=4.4.8",
-        "nette/php-generator": "^3.2",
-        "open-smf/connection-pool": "~1.0",
-        "stechstudio/backoff": "^1.2",
         "swoole/ide-helper": "^4.3",
         "symfony/finder": "^4.3.2|^5.1",
-        "topthink/framework": "^6.0"
+        "psr/log": "^1.0",
+        "monolog/monolog": "^2.2",
+        "sensiolabs/consul-php-sdk": "~4.0",
+        "openzipkin/zipkin": "~2.0",
+        "symfony/console":"v5.4.1"
     },
     "license": "Apache-2.0",
     "authors": [
@@ -29,14 +30,13 @@
         ]
     },
     "extra": {
-        "think": {
-            "services": [
-                "brown\\Service"
-            ],
-            "config": {
-                "swoole": "src/config/swoole.php"
-            }
+        "services": [
+            "brown\\brown"
+        ],
+        "config": {
+            "swoole": "src/config/swoole.php"
         }
+
     },
     "config": {
         "preferred-install": "dist",

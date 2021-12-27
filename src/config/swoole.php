@@ -1,82 +1,50 @@
 <?php
 
-use brown\websocket\socketio\Handler;
+
 
 return [
     'rpc'        => [
         'server' => [
             'enable'     => true,
             'host'       => '0.0.0.0',
-            'port'       => 9000,
+            'port'       => 9009,
             'worker_num' => swoole_cpu_num(),
-            'services'   => [
+            'service_name'=>'default',
+            'register'=>[
+                'enable'=>false,
+                'class'=>\brown\register\Consul::class,
+                'uri'=>'http://127.0.0.1:8500',
+                'weight'=>1,
+                'host'=>'127.0.0.1'
             ],
+            'services'   => [
+
+            ],
+
         ],
         'client' => [
+            'register'=>[
+                'enable'=>false,
+                'uri'=>'http://127.0.0.1:8500',
+                'class'=>\brown\register\Consul::class,
+                'service_name'=>[
+                    'default'
+                ]
+            ],
+            'default'=>[
+                'host'=>'127.0.0.1',
+                'port'=>'9009'
+            ],
+
         ],
-    ],
-    //队列
-    'queue'      => [
-        'enable'  => false,
-        'workers' => [],
     ],
     'hot_update' => [
-        'enable'  => env('APP_DEBUG', false),
+        'enable'  => true,
         'name'    => ['*.php'],
-        'include' => [app_path()],
+        'include' => [dirname(__DIR__) . DIRECTORY_SEPARATOR],
         'exclude' => [],
     ],
-    //连接池
-    'pool'       => [
-        'db'    => [
-            'enable'        => true,
-            'max_active'    => 3,
-            'max_wait_time' => 5,
-        ],
-        'cache' => [
-            'enable'        => true,
-            'max_active'    => 3,
-            'max_wait_time' => 5,
-        ],
-        //自定义连接池
+    'parser'=>[
+        'class'=>\brown\pack\Packer::class,
     ],
-    'http'       => [
-        'enable'     => false,
-        'host'       => '0.0.0.0',
-        'port'       => 80,
-        'worker_num' => swoole_cpu_num(),
-    ],
-    'websocket'  => [
-        'enable'        => false,
-        'handler'       => Handler::class,
-        'ping_interval' => 25000,
-        'ping_timeout'  => 60000,
-        'room'          => [
-            'type'  => 'table',
-            'table' => [
-                'room_rows'   => 4096,
-                'room_size'   => 2048,
-                'client_rows' => 8192,
-                'client_size' => 2048,
-            ],
-            'redis' => [
-                'host'          => '127.0.0.1',
-                'port'          => 6379,
-                'max_active'    => 3,
-                'max_wait_time' => 5,
-            ],
-        ],
-        'listen'        => [],
-        'subscribe'     => [],
-    ],
-
-    'tables'     => [],
-    //每个worker里需要预加载以共用的实例
-    'concretes'  => [],
-    //重置器
-    'resetters'  => [],
-    //每次请求前需要清空的实例
-    'instances'  => [],
-    //每次请求前需要重新执行的服务
-    'services'   => [],
 ];

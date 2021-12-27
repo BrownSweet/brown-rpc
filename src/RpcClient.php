@@ -1,177 +1,124 @@
 <?php
 namespace brown;
-use brown\rpc\application\Initialize;
-use Smf\ConnectionPool\ConnectionPool;
-use Swoole\Client;
-use think\App;
-use think\File;
-use brown\concerns\InteractsWithRpcConnector;
-
-use brown\concerns\WithApplication;
-use brown\concerns\WithContainer;
-use brown\exception\RpcClientException;
-use brown\rpc\client\Connector;
-use brown\rpc\client\Gateway;
-use brown\rpc\client\Proxy;
-use brown\rpc\Error;
-use brown\rpc\JsonParser;
-use brown\rpc\Packer;
-use brown\rpc\Protocol;
-use brown\rpc\Sendfile;
 
 
-class RpcClient extends Initialize
+
+
+use brown\client\Connector;
+use brown\request\AsyncRequest;
+use brown\request\Request;
+use brown\request\SyncRequest;
+use brown\server\core\Application;
+
+class RpcClient extends LogicService
 {
-    use Sendfile;
 
+    use Connector;
+    use Application;
 
-    protected $interface;
+    protected $services;
+    protected $request;
+    protected $method;
 
-    /** @var Gateway */
-    protected $gateway;
-
-    /** @var App */
-    protected $app;
-
-    protected $middleware = [];
-
-    protected $parser;
-
-    protected $client;
-    protected $this_service;
-    protected $this_request_body;
-    protected $this_request_name;
-    protected $this_method;
-    protected $send_data;
-    protected $request_prefix='request@';
-    protected $method_prefix='method@';
-    protected $parameter_prefix='parameter@';
-    protected $parameter;
-    protected $config;
-    protected $env='';
-    public function __construct()
-    {
-        $this->parser = new JsonParser();
-    }
-
+    protected $sync=true;
+    protected array $defaultOptions
+        = [
+            'open_length_check'     => true,
+            'package_length_type'   => 'N',
+            'package_length_offset' => 0, //第N个字节是包长度的值
+            'package_body_offset'   => 4, //第几个字节开始计算长度
+            'package_max_length'    => 81920, //协议最大长度
+        ];
+    protected array $options;
     public function __call($name, $arguments)
     {
+//
         switch ($name){
             case 'Service':
-                return $this->checkService($arguments);
+                return $this->setService($arguments);
                 break;
             case 'request':
-                return $this->checkQuest($arguments);
+                return $this->setRequest($arguments);
                 break;
             default:
-
-                return $this->checkMethod($name,$arguments)->sendAndRecv();
+                return $this->setMethod($name)->sendRequest($arguments);
                 break;
         }
-
-
+    }
+    public function setService($arguments){
+        $this->setModule($arguments[0]);
+        $this->services=$arguments[0];
+        return $this;
+    }
+    public function setRequest($arguments){
+        $this->request=$arguments[0];
+        return $this;
+    }
+    public function setMethod($method){
+        $this->method=$method;
+        return $this;
+    }
+    public function Sync($sync=true){
+        $this->sync=$sync;
+        return $this;
+    }
+    public function sendRequest($arguments){
+        if ($this->sync){
+            $request=SyncRequest::create($this->services,$this->request,$this->method,$arguments[0],$this->getTracerContext(
+                $this->getParentInfo()
+            ));
+            return $this->send($request);
+        }else{
+//            AsyncRequest::create();
+        }
     }
 
-    public function setEnvName($env=''){
-        $this->env=$env;
+    public function setOptions($options=[]){
+        $this->options=array_merge($this->defaultOptions,$options);
         return $this;
     }
 
-    protected function checkService($service)
-    {
-        $this->prepareApplication($this->env);
-        if (file_exists($swoole_config = $this->app->getConfigPath() . 'swoole.php')) {
-            $rpc_swoole_service = (array)include $swoole_config;
-            if (isset($rpc_swoole_service['rpc']['client'][$service[0]])) {
-                $this->config = $rpc_swoole_service['rpc']['client'][$service[0]];
-                $this->this_service = $service[0];
-                return $this;
-            }
-        }
-    }
-
-    protected function checkQuest($quest)
-    {
-        if (file_exists($rpc = $this->app->getBasePath() . 'rpc.php')) {
-            $rpcServices = (array) include $rpc;
-            if (isset($rpcServices[$this->this_service][$this->request_prefix.$quest[0]])){
-                $this->this_request_body=$rpcServices[$this->this_service][$this->request_prefix.$quest[0]];
-            }
-            $this->this_request_name=$quest[0];
-            return $this;
-        }
-    }
-
-    protected function checkMethod($method,$params){
-
-        if (isset($this->this_request_body[$this->method_prefix.$method])){
-            $this->this_method=$method;
-            $this->parameter=$params[0];
-            return $this;
-        }
-
-    }
-
-    protected function sendAndRecv(){
-
-        $client = new Client(SWOOLE_SOCK_TCP);
-        if (!$client->connect($this->config['host'], $this->config['port'], -1)) {
-            throw new RpcClientException('Connection is closed. ' . $client->errMsg, $client->errCode);
-        }
-
-        $data=$this->encodeData($this->proxyCall($this->this_request_name,$this->this_method,$this->parameter));
-        if (!$data instanceof \Generator) {
-            $data = [$data];
-        }
-        foreach ($data as $string) {
-            if (!empty($string)) {
-                if ($client->send($string) === false) {
-                    throw new RpcClientException('Send data failed. ' . $client->errMsg, $client->errCode);
-                }else{
-
+    protected function get_local_ip() {
+        $preg = "/\A((([0-9]?[0-9])|(1[0-9]{2})|(2[0-4][0-9])|(25[0-5]))\.){3}(([0-9]?[0-9])|(1[0-9]{2})|(2[0-4][0-9])|(25[0-5]))\Z/";
+//获取操作系统为win2000/xp、win7的本机IP真实地址
+        exec("ipconfig", $out, $stats);
+        if (!empty($out)) {
+            foreach ($out AS $row) {
+                if (strstr($row, "IP") && strstr($row, ":") && !strstr($row, "IPv6")) {
+                    $tmpIp = explode(":", $row);
+                    if (preg_match($preg, trim($tmpIp[1]))) {
+                        return trim($tmpIp[1]);
+                    }
                 }
             }
         }
-
-        $data=$client->recv();
-
-        $client->close();
-
-        return $this->decodeData($data);
-    }
-
-    protected function encodeData(Protocol $protocol)
-    {
-        $params = $protocol->getParams();
-
-        //有文件,先传输
-        foreach ($params as $index => $param) {
-            if ($param instanceof File) {
-                yield from $this->fread($param);
-                $params[$index] = Protocol::FILE;
+//获取操作系统为linux类型的本机IP真实地址
+        exec("ifconfig", $out, $stats);
+        if (!empty($out)) {
+            if (isset($out[1]) && strstr($out[1], 'addr:')) {
+                $tmpArray = explode(":", $out[1]);
+                $tmpIp = explode(" ", $tmpArray[1]);
+                if (preg_match($preg, trim($tmpIp[0]))) {
+                    return trim($tmpIp[0]);
+                }
             }
         }
-
-        $protocol->setParams($params);
-
-        $data = $this->parser->encode($protocol);
-
-        yield Packer::pack($data);
-    }
-    protected function proxyCall($service,$method, $params)
-    {
-
-        $protocol = Protocol::make($service, $method, $params);
-
-        return $protocol;
-
+        return '127.0.0.1';
     }
 
-    protected function decodeData($data){
-        [$handler, $data] = Packer::unpack($data);
-        $result=$handler->write($data);
-        $res=json_decode($result,true);
-        return $res['result'];
+    protected function getParentInfo(){
+        $array=debug_backtrace();
+
+        $parent=$array[2];
+        $file=$parent['file'];
+        $line=$parent['line'];
+        $service=$parent['object']->services;
+        $request=$parent['object']->request;
+        $method=$parent['object']->method;
+        $args=$parent['args'][1][0];
+
+        return 'ip:'.$this->get_local_ip().'文件:'.$file.'  第'.$line.'行'.',服务名称为'.$service.',请求的类'.$request.',方法'.$method.',参数'.json_encode($args);
+
     }
 
 }
