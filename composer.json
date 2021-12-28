@@ -30,13 +30,14 @@
         ]
     },
     "extra": {
-        "services": [
-            "brown\\brown"
-        ],
-        "config": {
-            "swoole": "src/config/swoole.php"
+        "brown": {
+            "command":{
+                "brown": "src/command/brown"
+            },
+            "config": {
+                "brown": "src/config/brown.php"
+            }
         }
-
     },
     "config": {
         "preferred-install": "dist",
@@ -46,5 +47,10 @@
             "ext-swoole": "4.4.8",
             "ext-fileinfo": "1.0.4"
         }
+    },
+    "scripts": {
+        "post-autoload-dump":[
+            "brown\\command\\Vendor::execute"
+        ]
     }
 }

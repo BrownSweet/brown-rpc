@@ -22,10 +22,14 @@ trait Application
 
        $this->root_path    = $root_path?$root_path:dirname($this->now_path, 5) . DIRECTORY_SEPARATOR;
 
-       $this->config_path=$this->root_path.'config'.DIRECTORY_SEPARATOR.'swoole.php';
+       $this->config_path=$this->root_path.'config'.DIRECTORY_SEPARATOR.'brown.php';
 
        $this->config=(array) include $this->config_path;
 
+   }
+
+   public function getRootPath(){
+       return $this->root_path;
    }
 
 //    /**

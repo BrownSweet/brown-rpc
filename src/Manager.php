@@ -25,9 +25,7 @@ class Manager
      */
     protected function initialize():void
     {
-
         $this->loadRpcServer();
-
     }
 
 
