@@ -3,6 +3,7 @@
 namespace brown;
 
 use brown\server\core\Application;
+use brown\server\framework\Initialize;
 use brown\server\rpc\RpcServer;
 use brown\server\Server;
 use brown\server\update\HotUpdate;
@@ -13,6 +14,7 @@ use brown\server\core\Services;
  */
 class Manager
 {
+    use Initialize;
     use Services;
     use Server;
     use RpcServer;

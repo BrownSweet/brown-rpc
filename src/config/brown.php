@@ -3,6 +3,10 @@
 
 
 return [
+    'framework' =>[
+        'name'=>'tp',
+        'env'=>'testing'
+    ],
     'rpc'        => [
         'server' => [
             'enable'     => true,
