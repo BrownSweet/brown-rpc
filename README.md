@@ -374,7 +374,7 @@ return [
 
 
 
-在Index.php中使用如下：
+同步模式在Index.php中使用如下：
 
 ```php
 <?php
@@ -399,6 +399,40 @@ class Index
     }
 }
 
+```
+
+异步模式在Index.php中使用
+
+```php
+class Index extends BaseController
+{
+    public function index()
+    {
+		//面向对象回调函数
+        echo (new RpcClient())->Sync(false)->callback([$this,'callback'])->Service('default')->request('Index')->hello([
+            'name'=>111
+        ]);
+        
+        //匿名函数回调函数
+		(new RpcClient())->Sync(false)->callback(function($data){
+            //回调函数 处理逻辑
+        })->Service('default')->request('Index')
+            ->hello([
+            'name'=>111
+        ]);
+    }
+
+    public function hello($name = 'ThinkPHP6')
+    {
+        return 'hello,' . $name;
+    }
+
+    public function callback($data){
+        print_r($data);
+        //处理逻辑
+    }
+
+}
 ```
 
 

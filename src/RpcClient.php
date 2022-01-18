@@ -19,6 +19,7 @@ class RpcClient extends LogicService
     protected $services;
     protected $request;
     protected $method;
+    protected $callback=null;
 
     protected $sync=true;
     protected array $defaultOptions
@@ -62,6 +63,10 @@ class RpcClient extends LogicService
         $this->sync=$sync;
         return $this;
     }
+    public function callback($callback){
+        $this->callback=$callback;
+        return $this;
+    }
     public function sendRequest($arguments){
         if ($this->sync){
             $request=SyncRequest::create($this->services,$this->request,$this->method,$arguments[0],$this->getTracerContext(
@@ -69,7 +74,12 @@ class RpcClient extends LogicService
             ));
             return $this->send($request);
         }else{
-//            AsyncRequest::create();
+            $request=AsyncRequest::create($this->services,$this->request,$this->method,$arguments[0],$this->getTracerContext(
+                $this->getParentInfo()
+            ));
+            if (is_callable($this->callback)){
+                call_user_func($this->callback,$this->send($request));
+            }
         }
     }
 
