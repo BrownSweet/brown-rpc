@@ -11,8 +11,7 @@
         "monolog/monolog": "^2.2",
         "sensiolabs/consul-php-sdk": "~4.0",
         "openzipkin/zipkin": "~2.0",
-        "symfony/console":"v5.4.1",
-        "symfony/process": "v5.4.2"
+        "symfony/console":"v5.4.1"
     },
     "license": "Apache-2.0",
     "authors": [
