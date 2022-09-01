@@ -13,10 +13,8 @@ trait Initialize
     public function frameworkInitialize()
     {
         if ($this->getConfig('framework.name')=='tp'){
-            echo 2;
-            if ($this->getConfig('framework.env')){
-                $this->setEnv($this->getConfig('framework.env'))->init();
-            }
+            $this->logger->info('检测为tp框架，.env文件为'.$this->getConfig('framework.env')??'');
+            $this->setEnv($this->getConfig('framework.env'));
         }
     }
 

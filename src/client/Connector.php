@@ -35,9 +35,9 @@ trait Connector
             $port=$config[$this->services]['port'];
         }
 
-
+        $timeout=$this->getConfig('rpc.client.timeout');
         $client=new Client(SWOOLE_SOCK_TCP);
-        if (!$client->connect($host,$port,5)){
+        if (!$client->connect($host,$port,$timeout)){
             throw new RpcException("连接失败");
         }
         return $client;

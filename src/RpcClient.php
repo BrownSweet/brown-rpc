@@ -68,6 +68,7 @@ class RpcClient extends LogicService
         return $this;
     }
     public function sendRequest($arguments){
+        $this->setTracerUrl($this->getConfig('trace.tracerUrl'));
         if ($this->sync){
             $request=SyncRequest::create($this->services,$this->request,$this->method,$arguments[0],$this->getTracerContext(
                 $this->getParentInfo()

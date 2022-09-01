@@ -14,7 +14,7 @@ class LogicService
 {
     protected $params;
     protected $module;
-    protected $tracerUrl='http://120.53.236.218:9411/api/v2/spans';
+    protected $tracerUrl;
     protected $tracerContext;
     protected $clients = [];
 
@@ -35,7 +35,7 @@ class LogicService
      */
     public function initTracer($func)
     {
-        $reporterUrl = $this->tracerUrl ?: 'http://120.53.236.218:9411/api/v2/spans';
+        $reporterUrl = $this->tracerUrl ?: 'http://127.0.0.1/api/v2/spans';
         $endpoint = Endpoint::create($this->module);
         $reporter = new Http(['endpoint_url' => $reporterUrl]);
         $sampler = BinarySampler::createAsAlwaysSample();

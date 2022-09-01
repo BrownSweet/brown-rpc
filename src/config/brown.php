@@ -19,7 +19,8 @@ return [
                 'class'=>\brown\register\Consul::class,
                 'uri'=>'http://127.0.0.1:8500',
                 'weight'=>1,
-                'host'=>'127.0.0.1'
+                'host'=>'127.0.0.1',
+                'port'=> 9009,
             ],
             'services'   => [
 
@@ -27,6 +28,7 @@ return [
 
         ],
         'client' => [
+            'timeout'=>60,
             'register'=>[
                 'enable'=>false,
                 'uri'=>'http://127.0.0.1:8500',
@@ -51,4 +53,7 @@ return [
     'parser'=>[
         'class'=>\brown\pack\Packer::class,
     ],
+    'trace'=>[
+        'tracerUrl'=>'http://127.0.0.1:9411/api/v2/spans'
+    ]
 ];

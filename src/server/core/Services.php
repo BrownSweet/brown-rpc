@@ -103,7 +103,7 @@ trait Services
                 throw new RpcException('检测到开启注册中心，请将host填写为ip地址而非服务监听地址');
             }
 
-            $port = $this->getConfig('rpc.server.port', 9009);
+            $port = $this->getConfig('rpc.server.register.port', 9009);
             $service_name = $this->getConfig('rpc.server.service_name', 'default');
             $weight=$this->getConfig('rpc.server.register.weight', '10');
             $r_c->register($service_name,$host,$port,$weight);

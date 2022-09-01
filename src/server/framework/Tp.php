@@ -28,8 +28,12 @@ trait Tp
         if (!($this->app instanceof App)){
             $this->app();
         }
-        $this->app->setEnvName('testing');
-        return $this;
+        if ($env){
+            $this->app->setEnvName($env)->initialize();
+        }else{
+            $this->app->initialize();
+        }
+
     }
 
     public function init(){
