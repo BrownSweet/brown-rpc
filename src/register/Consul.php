@@ -55,7 +55,7 @@ class Consul implements RegisterInterface
             'Port'    => $port,
             'Address' => $host,
             'Tags'    => [
-                'port_' . $port,
+                $host . '_' . $port,
             ],
             'Weights' => [
                 'Passing' => $weight,

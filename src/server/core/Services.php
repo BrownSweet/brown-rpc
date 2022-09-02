@@ -96,7 +96,8 @@ trait Services
 
         if($this->getConfig('rpc.server.register.enable')){
             $Register=$this->getConfig('rpc.server.register.class');
-            $r_c=new $Register($this->getConfig('rpc.server.register.uri'));
+            $r_uri=$this->getConfig('rpc.server.register.uri');
+            $r_c=new $Register($r_uri);
             $host = $this->getConfig('rpc.server.register.host', '0.0.0.0');
             if ($host=='0.0.0.0'){
                 $this->logger->info('检测到开启注册中心，请将host填写为ip地址而非服务监听地址');
@@ -107,7 +108,7 @@ trait Services
             $service_name = $this->getConfig('rpc.server.service_name', 'default');
             $weight=$this->getConfig('rpc.server.register.weight', '10');
             $r_c->register($service_name,$host,$port,$weight);
-            $this->logger->info('服务已经注册中心');
+            $this->logger->info('服务已注册,登录注册中心查看'.$r_uri);
         }
     }
 
