@@ -119,7 +119,7 @@ trait RpcServer
         $instance = $reflect->newInstanceArgs();
         if (!method_exists($instance, $method)) {
             $this->logger->debug('method is not exist.', ['method' => $request->getMethod()]);
-            return Response::error(sprintf('%s method[%s] is not exist.', $service, $methodName));
+            return Response::error(sprintf('%s method[%s] is not exist.', $service, $method));
         }
 
 
