@@ -45,10 +45,10 @@ trait Server
             $this->startFuncArr[$workerId]($pool, $workerId);
         });
 
-        $pool->on(Constant::EVENT_WORKER_STOP,function ($pool, $workerId)
-        {
-            echo("[Worker #{$workerId}] WorkerStop\n");
-        });
+//        $pool->on(Constant::EVENT_WORKER_STOP,function ($pool, $workerId)
+//        {
+//            echo("[Worker #{$workerId}] WorkerStop\n");
+//        });
         $pool->start();
     }
 

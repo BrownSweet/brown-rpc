@@ -4,6 +4,7 @@ namespace brown;
 
 use brown\server\core\Application;
 use brown\server\framework\Initialize;
+use brown\server\queue\Queue;
 use brown\server\rpc\RpcServer;
 use brown\server\Server;
 use brown\server\update\HotUpdate;
@@ -18,6 +19,7 @@ class Manager
     use Services;
     use Server;
     use RpcServer;
+    use Queue;
     use HotUpdate;
     use WorkerManger;
     use Application;
@@ -28,6 +30,7 @@ class Manager
     protected function initialize():void
     {
         $this->loadRpcServer();
+        $this->loadQueueServer();
     }
 
 

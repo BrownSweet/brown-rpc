@@ -44,6 +44,16 @@ return [
 
         ],
     ],
+    'queue'=>[
+        'enable'=>true,
+        'worker'=>[
+
+        ],
+        'worker_num'=>swoole_cpu_num(),
+        'listen'=>[
+
+        ],
+    ],
     'hot_update' => [
         'enable'  => true,
         'name'    => ['*.php'],
