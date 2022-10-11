@@ -1,7 +1,5 @@
 <?php
 
-
-
 return [
     'framework' =>[
         'name'=>'tp',
