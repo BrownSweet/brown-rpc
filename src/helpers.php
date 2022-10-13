@@ -18,3 +18,13 @@ if (!defined('SWOOLE_PROCESS')) {
 if (!defined('SWOOLE_HOOK_ALL')) {
     define('SWOOLE_HOOK_ALL', 1879048191);
 }
+if (!function_exists('SendRequest')){
+    function SendRequest($reqUrl,$sendData,array $header=[]){
+        $httpClient = new \GuzzleHttp\Client();
+        $request = $httpClient->post($reqUrl, [
+            'body'    => $sendData,
+            'headers' => $header
+        ]);
+        return $request->getStatusCode();
+    }
+}
