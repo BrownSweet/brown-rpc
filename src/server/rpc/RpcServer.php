@@ -107,6 +107,7 @@ trait RpcServer
             return Response::error($err);
         }
         $this->writeFile($request);
+        if ($request->getRequest()!='rpc_doc'){
         $service = $this->services[$request->getRequest()];
 //
         if (!$service) {
@@ -137,7 +138,10 @@ trait RpcServer
 
             return Response::error($e->getMessage());
         }
+        }else{
+            $result=$this->getInterfaces();
 
+        }
         return Response::success([
             'result' => $result
         ]);
@@ -152,6 +156,69 @@ trait RpcServer
             $params[$index]=$name;
         }
         $request->setParams($params);
+    }
+    /**
+     * 获取接口信息
+     * @return array
+     */
+    protected function getInterfaces()
+    {
+        $interfaces = [];
+        foreach ($this->services as $key => ['interface' => $interface]) {
+            $interfaces[$key] = $this->getMethods($interface);
+        }
+        return $interfaces;
+    }
+
+    protected function getMethods($interface)
+    {
+        $methods = [];
+
+        $reflection = new \ReflectionClass($interface);
+
+        foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            if ($method->isConstructor() || $method->isDestructor()) {
+                continue;
+            }
+            $returnType = $method->getReturnType();
+            if ($returnType instanceof \ReflectionNamedType) {
+                $returnType = $returnType->getName();
+            }
+
+            $methods[$method->getName()] = [
+                'parameters' => $this->getParameters($method),
+                'returnType' => $returnType,
+                'comment'    => $method->getDocComment(),
+            ];
+        }
+        return $methods;
+    }
+
+    protected function getParameters(ReflectionMethod $method)
+    {
+        $parameters = [];
+        foreach ($method->getParameters() as $parameter) {
+            $type = $parameter->getType();
+            if ($type instanceof \ReflectionNamedType) {
+                $type = $type->getName();
+            }
+
+            $param = [
+                'name' => $parameter->getName(),
+                'type' => $type,
+            ];
+
+            if ($parameter->isOptional()) {
+                $param['default'] = $parameter->getDefaultValue();
+            }
+
+            if ($parameter->allowsNull()) {
+                $param['nullable'] = true;
+            }
+
+            $parameters[] = $param;
+        }
+        return $parameters;
     }
 
 }
