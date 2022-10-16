@@ -4,14 +4,15 @@
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
-        "ext-swoole": ">=4.4.8",
+        "ext-swoole": ">=4.5.3",
         "swoole/ide-helper": "^4.3",
         "symfony/finder": "^4.3.2|^5.1",
         "psr/log": "^1.0",
         "monolog/monolog": "^2.2",
         "sensiolabs/consul-php-sdk": "~4.0",
         "openzipkin/zipkin": "~2.0",
-        "symfony/console":"v5.4.1"
+        "symfony/console":"v5.4.1",
+        "brown/brown-cmq": ">=v3.1"
     },
     "license": "Apache-2.0",
     "authors": [

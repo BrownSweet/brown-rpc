@@ -45,7 +45,7 @@ return [
     'queue'=>[
         'enable'=>true,
         'worker'=>[
-
+            \brown\server\queue\Cmq::getInstance()
         ],
         'worker_num'=>swoole_cpu_num(),
         'listen'=>[
