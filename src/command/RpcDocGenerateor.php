@@ -26,9 +26,9 @@ class RpcDocGenerateor
     use Application;
     public function generateor(InputInterface $input, OutputInterface $output){
         $services=$this->getConfig('rpc.client.register.service_name');
-        mkdir($this->getRootPath().'app/rpc');
-        foreach ($services as $service){
 
+        foreach ($services as $service){
+            mkdir($this->getRootPath().'app/rpc/'.strtolower($service));
             $class=(new RpcClient())->Service($service)->request('rpc_doc')->rpc_doc([]);
             $result=$class;
             $output->writeln('创建目录...');
@@ -46,7 +46,7 @@ class RpcDocGenerateor
 // +----------------------------------------------------------------------
              ');
                 $file->setStrictTypes();
-                $namespace = $file->addNamespace("app\\rpc");
+                $namespace = $file->addNamespace("app\\rpc\\".strtolower($service));
                 $class = $namespace->addClass(ucfirst($service).ucfirst($interface));
                 $output->write('正在创建接口'.ucfirst($service).ucfirst($interface));
                 echo PHP_EOL;
@@ -84,7 +84,7 @@ class RpcDocGenerateor
                     $codeRight='';
                 }
                 $codeLeft='';
-                file_put_contents($this->getRootPath().'app/rpc/' . ucfirst($service).ucfirst($interface).'.php', $file);//
+                file_put_contents($this->getRootPath().'app/rpc/'.strtolower($service) . ucfirst($service).ucfirst($interface).'.php', $file);//
                 $output->writeln("创建成功".ucfirst($service).ucfirst($interface).'.php');
                 $output->writeln("直接实例化调用 (new ".ucfirst($service).ucfirst($interface).'())');
             }

@@ -62,11 +62,11 @@ trait Connector
         foreach ($data as $string) {
             if (!empty($string)) {
                 if ($conn->send($string) === false) {
-                    throw new RpcException('Send data failed. ' . $client->errMsg, $client->errCode);
+                    throw new RpcException('Send data failed. ' .  $conn->errCode);
                 }
             }
         }
-        $result=unserialize($conn->recv());
+        $result=unserialize($conn->recv(65536,Client::MSG_WAITALL));
         if (!($result instanceof Response)){
             throw new RpcException('错误的响应');
         }
