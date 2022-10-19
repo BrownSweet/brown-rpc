@@ -28,7 +28,7 @@ class RpcDocGenerateor
         $services=$this->getConfig('rpc.client.register.service_name');
 
         foreach ($services as $service){
-            mkdir($this->getRootPath().'app/rpc/'.strtolower($service));
+            mkdir($this->getRootPath().'app/rpc/'.strtolower($service),0777,true);
             $class=(new RpcClient())->Service($service)->request('rpc_doc')->rpc_doc([]);
             $result=$class;
             $output->writeln('创建目录...');
@@ -84,7 +84,7 @@ class RpcDocGenerateor
                     $codeRight='';
                 }
                 $codeLeft='';
-                file_put_contents($this->getRootPath().'app/rpc/'.strtolower($service) . ucfirst($service).ucfirst($interface).'.php', $file);//
+                file_put_contents($this->getRootPath().'app/rpc/'.strtolower($service).'/' . ucfirst($service).ucfirst($interface).'.php', $file);//
                 $output->writeln("创建成功".ucfirst($service).ucfirst($interface).'.php');
                 $output->writeln("直接实例化调用 (new ".ucfirst($service).ucfirst($interface).'())');
             }
