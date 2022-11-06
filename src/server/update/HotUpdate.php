@@ -27,7 +27,7 @@ trait HotUpdate
                 $watcher->watch(function () use ($pool) {
                     Process::kill($pool->master_pid, SIGUSR1);
                 });
-            });
+            },'hot_update');
 
         }
     }

@@ -53,6 +53,7 @@ trait Services
      */
     public function bindRpcSerialization(){
         $this->serialization=$this->getConfig('parser.class');
+
     }
 
     protected function getService(){

@@ -25,7 +25,14 @@ class RpcDocGenerateor
 
     use Application;
     public function generateor(InputInterface $input, OutputInterface $output){
-        $services=$this->getConfig('rpc.client.register.service_name');
+        $services=$input->getArgument('services');
+
+        if (!$services||$services=='all'){
+            $services=$this->getConfig('rpc.client.register.service_name');
+
+        }else{
+            $services=[$services];
+        }
 
         foreach ($services as $service){
             mkdir($this->getRootPath().'app/rpc/'.strtolower($service));

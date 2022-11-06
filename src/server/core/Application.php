@@ -15,6 +15,7 @@ trait Application
     protected $config_path;
     protected $config=[];
     public $logger;
+    protected $brown_app;
    public function __construct($root_path='')
    {
 
@@ -26,6 +27,7 @@ trait Application
 
        $this->config=(array) include $this->config_path;
 
+       $this->brown_app=BrownContainer::getInstance();
    }
 
    public function getRootPath(){
@@ -101,4 +103,6 @@ trait Application
         }
         $this->logger = $logger;
     }
+
+
 }

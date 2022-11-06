@@ -2,6 +2,8 @@
 namespace brown\server;
 use brown\middlewares\TraceMiddleware;
 use Swoole\Constant;
+use Swoole\Coroutine;
+use Swoole\Event;
 use Swoole\Process;
 use Swoole\Process\Pool;
 
@@ -41,8 +43,19 @@ trait Server
             Process::signal(SIGTERM, function () {
                 $this->pool->getProcess()->exit();
             });
+            $socket=$this->pool->getProcess()->exportSocket();
+
+            Event::add($socket,function (Coroutine\Socket $socket){
+                $recv=$socket->recv();
+                $message=unserialize($recv);
+
+            });
             $this->clearCache();
-            $this->startFuncArr[$workerId]($pool, $workerId);
+            [$func,$name]=$this->startFuncArr[$workerId];
+            if ($name){
+                $this->setProcessName($name);
+            }
+            $func($pool, $workerId);
         });
 
 //        $pool->on(Constant::EVENT_WORKER_STOP,function ($pool, $workerId)

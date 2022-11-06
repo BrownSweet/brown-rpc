@@ -28,3 +28,16 @@ if (!function_exists('SendRequest')){
         return $request->getStatusCode();
     }
 }
+
+if(!function_exists('time_after')){
+    function time_after(int $ms_timeout,callable $callback){
+        return \Swoole\Timer::after($ms_timeout,$callback);
+    }
+}
+
+if (!function_exists('time_clear')){
+    function time_clear(int $time_id){
+        return \Swoole\Timer::clear($time_id);
+    }
+}
+

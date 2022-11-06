@@ -23,7 +23,7 @@ trait RpcServer
      */
     protected function loadRpcServer(){
         $workerNum = $this->getConfig('rpc.server.worker_num', swoole_cpu_num());
-        $this->addMoreWorker($workerNum,[$this,'runRpcServer']);
+        $this->addMoreWorker($workerNum,[$this,'runRpcServer'],'rpc_server');
     }
     /**rpc最终运行的方法
      * @author Brown 2021/12/23 20:19

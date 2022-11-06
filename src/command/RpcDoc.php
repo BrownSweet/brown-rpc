@@ -21,7 +21,8 @@ class RpcDoc extends Command
     public function configure()
     {
         $this->setName('rpcdoc:load')
-            ->setDescription('生成rpc server接口');
+            ->setDescription('生成rpc server接口')
+            ->addArgument('services',null,'选择要生成接口文档的服务');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
