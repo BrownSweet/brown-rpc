@@ -38,8 +38,8 @@ trait Queue{
             foreach ($listen as $listen) {
                 $this->addMoreWorker($workerNum, function (Process\Pool $pool) use ($worker, $listen) {
                     $this->logger->info('监听队列：' . $listen . PHP_EOL);
-                    $queueHandle = $worker->reciveMessage($listen);
-                    while ($queueHandle) {
+                    while (true) {
+                        $queueHandle = $worker->reciveMessage($listen);
                         if (!$queueHandle instanceof CMQExceptionBase) {
                             $cid = Coroutine::create(function () use ($listen, $queueHandle, $worker) {
                                 $msgBody = json_decode($queueHandle->msgBody, true);
