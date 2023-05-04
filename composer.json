@@ -1,58 +1,58 @@
 {
-    "name": "brown-rpc/brown-rpc",
-    "description": "rpc",
-    "require": {
-        "php": ">=7.4",
-        "ext-json": "*",
-        "ext-swoole": ">=4.5.3",
-        "swoole/ide-helper": "^4.5.3",
-        "nette/php-generator": "^3.2",
-        "symfony/finder": "^4.3.2|^5.1",
-        "psr/log": "^1.0",
-        "monolog/monolog": "^2.2",
-        "sensiolabs/consul-php-sdk": "~4.0",
-        "openzipkin/zipkin": "~2.0",
-        "symfony/console":"v5.4.1",
-        "brown/brown-cmq": ">=v3.1"
-    },
-    "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "Brown Sweet",
-            "email": "455764041@qq.com"
-        }
-    ],
-    "minimum-stability": "stable",
-    "autoload": {
-        "psr-4": {
-            "brown\\": "src"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
-    },
-    "extra": {
-        "brown": {
-            "command":{
-                "brown": "src/command/brown"
-            },
-            "config": {
-                "brown": "src/config/brown.php"
-            }
-        }
-    },
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "platform-check": false,
-        "platform": {
-            "ext-swoole": "4.4.8",
-            "ext-fileinfo": "1.0.4"
-        }
-    },
-    "scripts": {
-        "post-package-install":[
-            "brown\\command\\Vendor::execute"
-        ]
+  "name": "brown-rpc/brown-rpc",
+  "description": "rpc",
+  "require": {
+    "php": ">=7.4",
+    "ext-json": "*",
+    "ext-swoole": ">=4.5.3",
+    "swoole/ide-helper": "^4.5.3",
+    "nette/php-generator": "v4.0.7",
+    "symfony/finder": "^4.3.2|^5.1|v6.2.7",
+    "psr/log": "^1.0",
+    "monolog/monolog": "^3.0.0",
+    "sensiolabs/consul-php-sdk": "~4.0",
+    "openzipkin/zipkin": "~3.0.0",
+    "symfony/console":"v5.4.1",
+    "brown/brown-cmq": ">=v3.1"
+  },
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Brown Sweet",
+      "email": "455764041@qq.com"
     }
+  ],
+  "minimum-stability": "stable",
+  "autoload": {
+    "psr-4": {
+      "brown\\": "src"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "extra": {
+    "brown": {
+      "command":{
+        "brown": "src/command/brown"
+      },
+      "config": {
+        "brown": "src/config/brown.php"
+      }
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "platform-check": false,
+    "platform": {
+      "ext-swoole": "4.4.8",
+      "ext-fileinfo": "1.0.4"
+    }
+  },
+  "scripts": {
+    "post-package-install":[
+      "brown\\command\\Vendor::execute"
+    ]
+  }
 }
