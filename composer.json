@@ -8,9 +8,9 @@
     "swoole/ide-helper": "^4.5.3",
     "nette/php-generator": "v4.0.7",
     "symfony/finder": "^4.3.2|^5.1|v6.2.7",
-    "psr/log": "^1.0",
-    "monolog/monolog": "^3.0.0",
-    "sensiolabs/consul-php-sdk": "~4.0",
+    "psr/log": "^3.0.0",
+    "monolog/monolog": "^3.3.1",
+    "sensiolabs/consul-php-sdk": "~v5.0.0",
     "openzipkin/zipkin": "~3.0.0",
     "symfony/console":"v5.4.1",
     "brown/brown-cmq": ">=v3.1"
