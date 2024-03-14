@@ -29,7 +29,8 @@ class RpcDoc extends Command
     {
         $output->write('生成中...');
         (new RpcDocGenerateor())->generateor( $input,$output);
-        
+
+        return 1;
 
     }
 }

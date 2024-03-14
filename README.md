@@ -817,6 +817,73 @@ class Cmq implements QueueInterface
 
 
 
+### 3、一键生成RPC接口调用类与函数
+
+#### 1、说明
+
+为了更一步方便**客户端**调用，新增了`php brown rpcdoc:load` 命令,客户端配置好，服务端启动即可。
+
+#### 2、使用
+
+使用`php brown `查看
+
+```sh
+/var/www/rpc/client # php brown
+Console Tool
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help            Display help for the given command. When no command is given display help for the list command
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi|--no-ansi  Force (or disable --no-ansi) ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+  completion   Dump the shell completion script
+  help         Display help for a command
+  list         List commands
+ rpc
+  rpc:run      启动swoole服务
+ rpcdoc
+  rpcdoc:load  生成rpc server接口
+ server
+  server:run   启动swoole服务
+```
+
+
+
+使用`php brown rpcdoc:load`
+
+```sh
+/var/www/rpc/rpcclient # php brown rpc:load
+生成中...sh: ipconfig: not found
+创建目录...
+正在生成命名空间...
+正在创建接口MshTianyu
+正在加载brown\RpcClient
+正在创建接口name
+正在为接口添加返回值 return (new RpcClient())->Service('msh')->request('Tianyu')->name([]);
+正在创建接口age
+正在为接口添加参数a
+正在为接口添加参数a添加默认值1
+正在为接口添加返回值a return (new RpcClient())->Service('msh')->request('Tianyu')->age(['a'=>$a,]);
+创建成功MshTianyu.php
+直接实例化调用 (new MshTianyu())
+
+```
+
+在项目中生成`rpc/服务名`目录，可以看到生成的php文件，以服务名+服务端暴露类名.php的文件
+
+![image-20240314173102749](E:\学习\图床\image-20240314173102749-1710408932201-3.png)
+
+调用
+
+![image-20240314173210300](http://brown_sweet.gitee.io/images/rpc/image-20240314173210300.png)
+
 ## 软件安装
 
 

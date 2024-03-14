@@ -36,7 +36,7 @@ trait Server
         $this->logger->info('启动');
         $this->bindRegister();
         $this->frameworkInitialize();
-        $pool = new Pool(count($this->startFuncArr), SWOOLE_IPC_UNIXSOCK, null, true);
+        $pool = new Pool(count($this->startFuncArr), SWOOLE_IPC_UNIXSOCK, 1, true);
         $pool->on(Constant::EVENT_WORKER_START, function ($pool, $workerId) {
             $this->pool=$pool;
             $this->workId=$workerId;

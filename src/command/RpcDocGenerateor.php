@@ -35,7 +35,10 @@ class RpcDocGenerateor
         }
 
         foreach ($services as $service){
-            mkdir($this->getRootPath().'app/rpc/'.strtolower($service),0777,true);
+            $dir=$this->getRootPath().'app/rpc/'.strtolower($service);
+            if (!file_exists($dir) || !is_dir($dir)) {
+                mkdir($dir,0777,true);
+            }
             $class=(new RpcClient())->Service($service)->request('rpc_doc')->rpc_doc([]);
             $result=$class;
             $output->writeln('创建目录...');
