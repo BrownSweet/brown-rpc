@@ -36,34 +36,43 @@ trait RpcServer
 
         $host = $this->getConfig('rpc.server.host', '0.0.0.0');
         $port = $this->getConfig('rpc.server.port', 9009);
+        $protocol=$this->getConfig('rpc.protocol');
+        if ($protocol=='http'||$protocol=='https'){
 
-        try {
-            $server = new Server($host, $port, false, true);
-        }catch (RpcException $exception){
-            $this->deregister();
-            throw new RpcException($exception->getMessage());
-        }
-
-        $server->set($this->options);
-        $server->handle(function (Connection $conn)use($serialization) {
-            while (true) {
-                //接收数据
-                $data = $conn->recv(1);
-                if ($data === '' || $data === false) {
-                    $conn->close();
-                    break;
-                }
+            $server = new \Swoole\Coroutine\Http\Server($host, $port,false,true);
+            $server->handle('/', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response)use ($serialization) {
+                $data = $request->rawContent();
                 $request=$serialization->unpack($data);
-
-                $conn->send(serialize($this->doRequest($request)));
-
-                $conn->close();
-//                die;
-                //发送数据
-
+                $response->end(serialize($this->doRequest($request)));
+            });
+        }else {
+            try {
+                $server = new Server($host, $port, false, true);
+            } catch (RpcException $exception) {
+                $this->deregister();
+                throw new RpcException($exception->getMessage());
             }
-        });
 
+            $server->set($this->options);
+            $server->handle(function (Connection $conn) use ($serialization) {
+                while (true) {
+                    //接收数据
+                    $data = $conn->recv(1);
+                    if ($data === '' || $data === false) {
+                        $conn->close();
+                        break;
+                    }
+                    $request = $serialization->unpack($data);
+
+                    $conn->send(serialize($this->doRequest($request)));
+
+                    $conn->close();
+//                die;
+                    //发送数据
+
+                }
+            });
+        }
         $server->start();
     }
 

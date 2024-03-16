@@ -38,6 +38,8 @@ brown-rpc 是一款基于swoole的rpc拓展，可以通过composer安装，可�
 
 - ### 内置链路追踪
 
+- 内置TCP/HTTP调用
+
 
 
 ## 安装
@@ -175,6 +177,7 @@ return [
         'env'=>'testing'
     ],
     'rpc'        => [
+        'protocol'=>'http',
         'server' => [
             'enable'     => true,
             'host'       => '0.0.0.0',
@@ -261,11 +264,12 @@ laravel配置文件如下：
 <?php
 
 return [
-    'rpc'        => [
-        'framework' =>[
+    'framework' =>[
             'name'=>'laravel',
             'env'=>'testing'
     	],
+    'rpc'        => [
+		'protocol'=>'http',
         'server' => [
             'enable'     => true,
             'host'       => '0.0.0.0',
@@ -345,6 +349,7 @@ use brown\websocket\socketio\Handler;
 
 return [
     'rpc'        => [
+        'protocol'=>'http',
         'server' => [
             'enable'     => true,
             'host'       => '120.53.236.218',

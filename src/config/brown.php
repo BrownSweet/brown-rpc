@@ -6,6 +6,7 @@ return [
         'env'=>'testing'
     ],
     'rpc'        => [
+        'protocol'=>'http',
         'server' => [
             'enable'     => true,
             'host'       => '0.0.0.0',

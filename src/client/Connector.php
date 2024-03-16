@@ -11,6 +11,7 @@ namespace brown\client;
 use brown\request\Request;
 use brown\response\Response;
 use brown\sendfile\FileBase;
+use GuzzleHttp\Exception\ConnectException;
 use Swoole\Client;
 use brown\exceptions\RpcException;
 trait Connector
@@ -53,20 +54,32 @@ trait Connector
 
         $data=$this->encodeData($request,$this->parser);
 
-        $conn=$this->connect();
+        try {
+            $conn=$this->connect('http');
 
-        if (!$data instanceof \Generator){
-            $data=[$data];
-        }
+            $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
 
-        foreach ($data as $string) {
-            if (!empty($string)) {
-                if ($conn->send($string) === false) {
-                    throw new RpcException('Send data failed. ' .  $conn->errCode);
+            $response = $conn->send($request);
+
+            $result = unserialize($response->getBody()->getContents());
+        }catch (ConnectException $e){
+            $conn=$this->connect();
+            if (!$data instanceof \Generator){
+                $data=[$data];
+            }
+
+            foreach ($data as $string) {
+
+                if (!empty($string)) {
+
+                    if ($conn->send($string) === false) {
+                        throw new RpcException('Send data failed. ' .  $conn->errCode);
+                    }
                 }
             }
+            $result=unserialize($conn->recv(65536,Client::MSG_WAITALL));
         }
-        $result=unserialize($conn->recv(65536,Client::MSG_WAITALL));
+
         if (!($result instanceof Response)){
             throw new RpcException('错误的响应');
         }
