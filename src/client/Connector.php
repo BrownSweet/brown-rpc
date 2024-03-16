@@ -17,7 +17,7 @@ use brown\exceptions\RpcException;
 trait Connector
 {
     protected $parser;
-    public function connect():Client
+    public function connect()
     {
         if ($this->getConfig('rpc.client.register.enable')){
             $uri=$this->getConfig('rpc.client.register.uri');
