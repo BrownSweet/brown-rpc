@@ -11,7 +11,7 @@
 	"psr/log": "^1.0",
 	"monolog/monolog": "^2.2",
 	"sensiolabs/consul-php-sdk": "~4.0",
-	"openzipkin/zipkin": "~2.0",
+	"openzipkin/zipkin": "~3.2.0",
 	"symfony/console":"v5.4.1",
     "brown/brown-cmq": ">=v3.1",
     "brown/brown-dtm": ">=v1.0.0"
