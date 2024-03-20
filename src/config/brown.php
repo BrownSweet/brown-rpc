@@ -45,13 +45,24 @@ return [
     ],
     'queue'=>[
         'enable'=>true,
-        'worker'=>[
-            \brown\server\queue\Cmq::getInstance()
-        ],
         'worker_num'=>swoole_cpu_num(),
-        'listen'=>[
-
+        'worker'=>[
+            \brown\server\queue\Example::getInstance()
         ],
+        'listen'=>[
+            'example'
+        ],
+        'handlers'=>[
+            'caishichangdama'=>[
+                \app\controller\example::class,
+                \app\controller\example::class
+            ]
+        ],
+        'ack'=>[
+            'caishichangdama'=>[
+                \app\controller\example::class,
+            ]
+        ]
     ],
     'hot_update' => [
         'enable'  => true,

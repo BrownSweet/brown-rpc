@@ -32,52 +32,39 @@ trait Queue{
     {
 
         $workers = $this->getConfig('queue.worker');
-        $listen = $this->getConfig('queue.listen');
+        $listens = $this->getConfig('queue.listen');
         $workerNum = $this->getConfig('queue.worker_num');
+        $handlers=$this->getConfig('queue.handlers');
+        $ack=$this->getConfig('queue.ack');
         foreach ($workers as $worker) {
-            foreach ($listen as $listen) {
-                $this->addMoreWorker($workerNum, function (Process\Pool $pool) use ($worker, $listen) {
+            foreach ($listens as $listen) {
+                $this->addMoreWorker($workerNum, function (Process\Pool $pool) use ($worker, $listen,$handlers,$ack) {
                     $this->logger->info('监听队列：' . $listen . PHP_EOL);
                     while (true) {
                         $queueHandle = $worker->reciveMessage($listen);
-                        if (!$queueHandle instanceof CMQExceptionBase) {
-                            $cid = Coroutine::create(function () use ($listen, $queueHandle, $worker) {
-                                $msgBody = json_decode($queueHandle->msgBody, true);
-                                $autoAck = $msgBody['AutoAck'];
-                                if (isset($msgBody['notifyUrl'])) {
-                                    $url = $msgBody['notifyUrl'];
-                                    unset($msgBody['notifyUrl']);
-                                    unset($msgBody['AutoAck']);
-                                    $data = json_encode($msgBody);
-                                    $header = [
-                                        'user-agent' => 'Send Notification Brwon Queue Service Agent',
-                                        'content-type' => 'text/plain; charset=utf-8',
-                                        'x-cmq-message-id' => $queueHandle->msgId,
-                                        'x-cmq-receipt-handle' => $queueHandle->receiptHandle,
-                                        'x-cmq-enqueue-time' => $queueHandle->enqueueTime,
-                                        'x-cmq-queue-name' => $listen,
-                                        'x-cmq-queue-ack' => $autoAck
-                                    ];
-                                    $this->logger->info('开启处理协程,协程的父Id：' . Coroutine::getPcid() . ' 协程的Id' . Coroutine::getCid());
-                                    $this->logger->info($queueHandle . PHP_EOL);
-                                    $code = SendRequest($url, $data, $header);
-                                    if ($autoAck == QueueConstant::AUTO_ACK) {
-                                        $worker->AcknowledgeMessage($listen, $queueHandle);
-                                    }
-                                    if ($autoAck == QueueConstant::STATUS_CODE_ACK) {
-                                        if ($code >= 200 && $code < 400) {
-                                            $worker->AcknowledgeMessage($listen, $queueHandle);
-                                        }
-                                    }
-                                    if ($autoAck == QueueConstant::MANNUL_ACK) {
+                        foreach ($handlers[$listen] as $handler){
 
-                                    }
+                            $handler_obj=new $handler();
+                            if ($handler_obj instanceof QueueHandler){
+                                $cid = Coroutine::create(function () use ($listen, $queueHandle, $worker,$handler_obj) {
+                                    $handler_obj->handle($listen, $queueHandle);
+                                });
+                            }else{
+                                $handler_obj=null;
+                            }
+                        }
+
+                        if (array_key_exists($listen,$ack)){
+                            foreach ($ack[$listen] as $ackItem){
+                                $ackItem_obj=new $ackItem();
+                                if ($ackItem_obj instanceof QueueAcknowledge){
+                                    $cid = Coroutine::create(function () use ($listen, $queueHandle, $worker,$ackItem_obj) {
+                                        $ackItem_obj->AcknowledgeMessage($listen, $queueHandle);
+                                    });
+                                }else{
+                                    $ackItem_obj=null;
                                 }
-                            });
-                            $this->logger->info('内存使用量：' . Coroutine::getStackUsage());
-
-                        } else {
-
+                            }
                         }
                     }
                 },'queue_server');

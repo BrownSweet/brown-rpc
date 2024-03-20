@@ -20,9 +20,10 @@ class RpcRun extends Command
             ->setDescription('启动swoole服务');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output):int
     {
         $output->write('服务开启');
         (new Manager())->start();
+        return 1;
     }
 }
