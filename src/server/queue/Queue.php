@@ -36,17 +36,18 @@ trait Queue{
         $workerNum = $this->getConfig('queue.worker_num');
         $handlers=$this->getConfig('queue.handlers');
         $ack=$this->getConfig('queue.ack');
+
         foreach ($workers as $worker) {
             foreach ($listens as $listen) {
-                $this->addMoreWorker($workerNum, function (Process\Pool $pool) use ($worker, $listen,$handlers,$ack) {
+                $this->addMoreWorker($workerNum, function (Process\Pool $pool) use ($workers, $listen,$handlers,$ack) {
                     $this->logger->info('监听队列：' . $listen . PHP_EOL);
                     while (true) {
-                        $queueHandle = $worker->reciveMessage($listen);
+                        $queueHandle = $workers[$listen]->reciveMessage($listen);
                         foreach ($handlers[$listen] as $handler){
 
                             $handler_obj=new $handler();
                             if ($handler_obj instanceof QueueHandler){
-                                $cid = Coroutine::create(function () use ($listen, $queueHandle, $worker,$handler_obj) {
+                                $cid = Coroutine::create(function () use ($listen, $queueHandle, $workers,$handler_obj) {
                                     $handler_obj->handle($listen, $queueHandle);
                                 });
                             }else{
@@ -58,7 +59,7 @@ trait Queue{
                             foreach ($ack[$listen] as $ackItem){
                                 $ackItem_obj=new $ackItem();
                                 if ($ackItem_obj instanceof QueueAcknowledge){
-                                    $cid = Coroutine::create(function () use ($listen, $queueHandle, $worker,$ackItem_obj) {
+                                    $cid = Coroutine::create(function () use ($listen, $queueHandle, $workers,$ackItem_obj) {
                                         $ackItem_obj->AcknowledgeMessage($listen, $queueHandle);
                                     });
                                 }else{

@@ -47,20 +47,27 @@ return [
         'enable'=>true,
         'worker_num'=>swoole_cpu_num(),
         'worker'=>[
-            \brown\server\queue\Example::getInstance()
+            "first_example"=>\brown\server\queue\FirstExample::getInstance(),
+            "second_example"=>\brown\server\queue\SecondExample::getInstance(),
         ],
         'listen'=>[
-            'example'
+            'first_example',
+            'second_example'
         ],
         'handlers'=>[
-            'caishichangdama'=>[
-                \app\controller\example::class,
-                \app\controller\example::class
+            'first_example'=>[
+                \app\controller\FirstHandler::class,
+                \app\controller\SecondHandler::class
+            ],
+            'second_example'=>[
+                \app\controller\SecondHandler::class,
+                \app\controller\OtherHandler::class,
+
             ]
         ],
         'ack'=>[
-            'caishichangdama'=>[
-                \app\controller\example::class,
+            'first_example'=>[
+                \app\controller\Ack::class,
             ]
         ]
     ],
