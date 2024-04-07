@@ -25,7 +25,7 @@ class RpcDoc extends Command
             ->addArgument('services',null,'选择要生成接口文档的服务');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output):int
     {
         $output->write('生成中...');
         (new RpcDocGenerateor())->generateor( $input,$output);
