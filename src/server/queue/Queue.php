@@ -43,7 +43,7 @@ trait Queue{
                     $this->logger->info('监听队列：' . $listen . PHP_EOL);
                     while (true) {
                         if (!isset($workers[$listen])){
-                            $this->logger->info('队列监听器['.$listen.']不存在，退出['.$listen.']监听' . PHP_EOL);
+//                            $this->logger->info('队列监听器['.$listen.']不存在，退出['.$listen.']监听' . PHP_EOL);
                             continue;
                         }
                         $queueHandle = $workers[$listen]->reciveMessage($listen);
