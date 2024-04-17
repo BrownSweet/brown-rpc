@@ -17,7 +17,7 @@ use brown\exceptions\RpcException;
 trait Connector
 {
     protected $parser;
-    public function connect()
+    public function connect($proto='tcp')
     {
         if ($this->getConfig('rpc.client.register.enable')){
             $uri=$this->getConfig('rpc.client.register.uri');
@@ -37,9 +37,14 @@ trait Connector
         }
 
         $timeout=$this->getConfig('rpc.client.timeout');
-        $client=new Client(SWOOLE_SOCK_TCP);
-        if (!$client->connect($host,$port,$timeout)){
-            throw new RpcException("连接失败");
+        if ($proto=='tcp'){
+            $client=new Client(SWOOLE_SOCK_TCP);
+            if (!$client->connect($host,$port,$timeout)){
+                throw new RpcException("连接失败");
+            }
+        }else{
+            $client = new \GuzzleHttp\Client(['base_uri'=>$host.':'.$port,'timeout'=>$timeout]);
+
         }
         return $client;
     }
