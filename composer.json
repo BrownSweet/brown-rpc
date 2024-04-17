@@ -14,7 +14,8 @@
 	"openzipkin/zipkin": "~3.2.0",
 	"symfony/console":">=v6.0.0",
     "brown/brown-cmq": ">=v3.1",
-    "brown/brown-dtm": ">=v1.0.0"
+    "brown/brown-dtm": ">=v1.0.0",
+    "guzzlehttp/guzzle": "^7.4"
   },
   "license": "Apache-2.0",
   "authors": [
