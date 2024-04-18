@@ -27,7 +27,8 @@
   "minimum-stability": "stable",
   "autoload": {
     "psr-4": {
-      "brown\\": "src"
+      "brown\\": "src",
+      "brownGrpc": "grpc/BrownGrpc"
     },
     "files": [
       "src/helpers.php"
