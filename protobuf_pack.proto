@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package BrownGrpc;
+
+message NestedArray {
+  message InnerArray {
+    repeated string values = 1;
+  }
+
+  repeated InnerArray arrays = 1;
+}
