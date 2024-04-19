@@ -10,7 +10,7 @@
 	"symfony/finder": "^4.3.2|^5.1",
 	"psr/log": "^3.0.0",
 	"monolog/monolog": "^2.2",
-	"sensiolabs/consul-php-sdk": "~4.0",
+	"friendsofphp/consul-php-sdk": "~4.0",
 	"openzipkin/zipkin": "~3.2.0",
 	"symfony/console":">=v6.0.0",
     "brown/brown-cmq": ">=v3.1",
