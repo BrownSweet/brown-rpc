@@ -30,7 +30,7 @@
     "psr-4": {
       "brown\\": "src",
       "BrownGrpc\\": "grpc/BrownGrpc",
-      "BrownGPBMetadata\\": "grpc/GPBMetadata"
+      "GPBMetadata\\": "grpc/GPBMetadata"
     },
     "files": [
       "src/helpers.php"
