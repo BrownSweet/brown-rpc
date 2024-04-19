@@ -28,7 +28,7 @@
   "autoload": {
     "psr-4": {
       "brown\\": "src",
-      "brownGrpc": "grpc/BrownGrpc"
+      "brownGrpc\\": "grpc/BrownGrpc"
     },
     "files": [
       "src/helpers.php"
