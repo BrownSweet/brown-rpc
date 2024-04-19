@@ -2,10 +2,7 @@ syntax = "proto3";
 
 package BrownGrpc;
 
-message NestedArray {
-  message InnerArray {
-    repeated string values = 1;
-  }
 
-  repeated InnerArray arrays = 1;
+message Pack {
+  string value = 1;
 }

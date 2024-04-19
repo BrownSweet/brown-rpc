@@ -16,13 +16,10 @@ class ProtobufPack
         }
         $pool->internalAddGeneratedFile(
             '
-�
-protobuf_pack.proto	brownGrpc"^
-NestedArray1
-arrays (2!.brownGrpc.NestedArray.InnerArray
-
-InnerArray
-values (	bproto3'
+?
+protobuf_pack.proto	BrownGrpc"
+Pack
+value (	bproto3'
         , true);
 
         static::$is_initialized = true;

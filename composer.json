@@ -15,7 +15,8 @@
 	"symfony/console":">=v6.0.0",
     "brown/brown-cmq": ">=v3.1",
     "brown/brown-dtm": ">=v1.0.0",
-    "guzzlehttp/guzzle": "^7.4"
+    "guzzlehttp/guzzle": "^7.4",
+    "google/protobuf": "^4.26"
   },
   "license": "Apache-2.0",
   "authors": [
@@ -28,7 +29,8 @@
   "autoload": {
     "psr-4": {
       "brown\\": "src",
-      "brownGrpc\\": "grpc/BrownGrpc"
+      "BrownGrpc\\": "grpc/BrownGrpc",
+      "BrownGPBMetadata\\": "grpc/GPBMetadata"
     },
     "files": [
       "src/helpers.php"

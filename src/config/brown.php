@@ -44,35 +44,36 @@ return [
         ],
     ],
     'queue'=>[
-        'enable'=>true,
+        'enable'=>false,
         'worker_num'=>swoole_cpu_num(),
-        'worker'=>[
-            "first_example"=>\brown\server\queue\FirstExample::getInstance(),
-            "second_example"=>\brown\server\queue\SecondExample::getInstance(),
-        ],
         'listen'=>[
-            'first_example',
-            'second_example'
+//            'first_example',
+//            'second_example'
         ],
-        'handlers'=>[
-            'first_example'=>[
-                \app\controller\FirstHandler::class,
-                \app\controller\SecondHandler::class
-            ],
-            'second_example'=>[
-                \app\controller\SecondHandler::class,
-                \app\controller\OtherHandler::class,
+        'worker'=>[
+//            "first_example"=>\brown\server\queue\FirstExample::getInstance(),
+//            "second_example"=>\brown\server\queue\SecondExample::getInstance(),
+        ],
 
-            ]
+        'handlers'=>[
+//            'first_example'=>[
+//                \app\controller\FirstHandler::class,
+//                \app\controller\SecondHandler::class
+//            ],
+//            'second_example'=>[
+//                \app\controller\SecondHandler::class,
+//                \app\controller\OtherHandler::class,
+//
+//            ]
         ],
         'ack'=>[
-            'first_example'=>[
-                \app\controller\Ack::class,
-            ]
+//            'first_example'=>[
+//                \app\controller\Ack::class,
+//            ]
         ]
     ],
     'hot_update' => [
-        'enable'  => true,
+        'enable'  => false,
         'name'    => ['*.php'],
         'include' => [dirname(__DIR__) . DIRECTORY_SEPARATOR],
         'exclude' => [],
