@@ -15,25 +15,26 @@ abstract class Request
     protected string $service;
     protected string $method;
     protected array $params;
+    protected $protocol;
     protected $file=[];
     protected bool $isSync = true; //是否同步请求，默认是
     protected bool $isSystem = false; //是否系统请求，默认否
     protected $error;
     protected ?TracerContext $traceContext;
 
-    public static function create($service,$request,$method, $params, ?TracerContext $traceContext = null)
+    public static function create($service,$request,$method, $params,$protocol, ?TracerContext $traceContext = null)
     {
-        return new static ($service,$request,$method, $params, $traceContext);
+        return new static ($service,$request,$method, $params, $protocol,$traceContext);
     }
 
-    public function __construct($service,$request,$method, $params, ?TracerContext $traceContext = null)
+    public function __construct($service,$request,$method, $params,$protocol, ?TracerContext $traceContext = null)
     {
 
         $this->service=$service;
         $this->request=$request;
         $this->method = $method;
         $this->params=$params;
-
+        $this->protocol=$protocol;
         $this->traceContext = $traceContext;
         $this->init();
     }
@@ -59,7 +60,7 @@ abstract class Request
     }
 
     public function getRequest(){
-       return $this->request;
+        return $this->request;
     }
     public function setParams(array $params)
     {
@@ -132,5 +133,9 @@ abstract class Request
         $this->file = $file;
     }
 
+    public function getProtocol()
+    {
+        return $this->protocol;
+    }
 
 }

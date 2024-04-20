@@ -22,6 +22,7 @@ class RpcClient extends LogicService
     protected $callback=null;
 
     protected $sync=true;
+    protected $ptocol='';
     protected array $defaultOptions
         = [
             'open_length_check'     => true,
@@ -67,15 +68,20 @@ class RpcClient extends LogicService
         $this->callback=$callback;
         return $this;
     }
+    public function setProtocol($protocol){
+        $this->ptocol=$protocol;
+        return $this;
+    }
     public function sendRequest($arguments){
         $this->setTracerUrl($this->getConfig('trace.tracerUrl'));
+        $this->setProtocol($this->getConfig('rpc.protocol'));
         if ($this->sync){
-            $request=SyncRequest::create($this->services,$this->request,$this->method,$arguments[0],$this->getTracerContext(
+            $request=SyncRequest::create($this->services,$this->request,$this->method,$arguments[0],$this->ptocol,$this->getTracerContext(
                 $this->getParentInfo()
             ));
             return $this->send($request);
         }else{
-            $request=AsyncRequest::create($this->services,$this->request,$this->method,$arguments[0],$this->getTracerContext(
+            $request=AsyncRequest::create($this->services,$this->request,$this->method,$arguments[0],$this->ptocol,$this->getTracerContext(
                 $this->getParentInfo()
             ));
             if (is_callable($this->callback)){

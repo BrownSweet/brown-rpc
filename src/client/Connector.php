@@ -58,17 +58,15 @@ trait Connector
         }
 
         $data=$this->encodeData($request,$this->parser);
+        $conn=$this->connect($request->getProtocol());
 
-        try {
-            $conn=$this->connect('http');
-
+        if ($conn instanceof \GuzzleHttp\Client){
             $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
 
             $response = $conn->send($request);
 
             $result = unserialize($response->getBody()->getContents());
-        }catch (ConnectException $e){
-            $conn=$this->connect();
+        }elseif ($conn instanceof Client){
             if (!$data instanceof \Generator){
                 $data=[$data];
             }
@@ -84,6 +82,32 @@ trait Connector
             }
             $result=unserialize($conn->recv(65536,Client::MSG_WAITALL));
         }
+
+//        try {
+//            $conn=$this->connect('http');
+//
+//            $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
+//
+//            $response = $conn->send($request);
+//
+//            $result = unserialize($response->getBody()->getContents());
+//        }catch (ConnectException $e){
+//            $conn=$this->connect();
+//            if (!$data instanceof \Generator){
+//                $data=[$data];
+//            }
+//
+//            foreach ($data as $string) {
+//
+//                if (!empty($string)) {
+//
+//                    if ($conn->send($string) === false) {
+//                        throw new RpcException('Send data failed. ' .  $conn->errCode);
+//                    }
+//                }
+//            }
+//            $result=unserialize($conn->recv(65536,Client::MSG_WAITALL));
+//        }
 
         if (!($result instanceof Response)){
             throw new RpcException('错误的响应');
@@ -104,7 +128,7 @@ trait Connector
             if ($param instanceof FileBase) {
                 $handle = fopen($param->getPathname(), 'rb');
                 $file=[
-                  $index=>  fread($handle, 8192)
+                    $index=>  fread($handle, 8192)
                 ];
                 unset($params[$index]);
 
