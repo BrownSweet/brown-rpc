@@ -2,7 +2,7 @@
   "name": "brown-rpc/brown-rpc",
   "description": "rpc",
   "require": {
-	"php": ">=8.0.2",
+	"php": ">=7.4||>=8.0.2",
 	"ext-json": "*",
 	"ext-swoole": ">=4.5.3",
 	"swoole/ide-helper": "^4.5.3",
