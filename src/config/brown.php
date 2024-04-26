@@ -1,5 +1,8 @@
 <?php
 
+use Dtm\Constants\DbType;
+use Dtm\Constants\Protocol;
+
 return [
     'framework' =>[
         'name'=>'tp',
@@ -83,5 +86,22 @@ return [
     ],
     'trace'=>[
         'tracerUrl'=>'http://127.0.0.1:9411/api/v2/spans'
+    ],
+    'dtm'=>[
+        'protocol' => Protocol::HTTP,
+        'server' => '82.157.58.76',
+        'port' => [
+            'http' => 36789,
+            'grpc' => 36790,
+        ],
+        'barrier' => [
+            'db' => [
+                'type' => DbType::MySQL,
+            ],
+            'apply' => [],
+        ],
+        'guzzle' => [
+            'options' => [],
+        ],
     ]
 ];
