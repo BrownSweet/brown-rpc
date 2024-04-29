@@ -72,7 +72,7 @@ trait Queue{
                                 $ackItem_obj=new $ackItem();
                                 if ($ackItem_obj instanceof QueueAcknowledge){
                                     $cid = Coroutine::create(function () use ($listen, $queueHandle, $workers,$ackItem_obj) {
-                                        $ackItem_obj->AcknowledgeMessage($listen, $queueHandle);
+                                        $ackItem_obj->acknowledgeMessage($listen, $queueHandle);
                                     });
                                 }else{
                                     $ackItem_obj=null;

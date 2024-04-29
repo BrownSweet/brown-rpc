@@ -9,5 +9,5 @@ namespace brown\server\queue;
 
 interface QueueAcknowledge
 {
-    public function AcknowledgeMessage($queueName,$recv_msg ,$params=[]);
+    public function acknowledgeMessage($queueName,$recv_msg ,$params=[]);
 }
