@@ -54,19 +54,22 @@ return [
 //            'second_example'
         ],
         'worker'=>[
+            //---------共享队列--------
+//            "first_example,second_example"=>[\brown\server\queue\FirstExample::getInstance()],
+//            "first_example,second_example"=>[\brown\server\queue\FirstExample::getInstance(),\brown\server\queue\SecondExample::getInstance()],
+           //---------独立队列--------
+//            "second_example"=>\brown\server\queue\SecondExample::getInstance(),
 //            "first_example"=>\brown\server\queue\FirstExample::getInstance(),
 //            "second_example"=>\brown\server\queue\SecondExample::getInstance(),
         ],
 
         'handlers'=>[
-//            'first_example'=>[
+//            'first_example,second_example'=>[
 //                \app\controller\FirstHandler::class,
 //                \app\controller\SecondHandler::class
 //            ],
-//            'second_example'=>[
-//                \app\controller\SecondHandler::class,
+//            'first_example'=>[
 //                \app\controller\OtherHandler::class,
-//
 //            ]
         ],
         'ack'=>[

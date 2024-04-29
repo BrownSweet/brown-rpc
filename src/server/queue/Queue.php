@@ -37,16 +37,51 @@ trait Queue{
         $handlers=$this->getConfig('queue.handlers');
         $ack=$this->getConfig('queue.ack');
 
+        $new_workers=[];
+        foreach ($workers as $key=>&$value){
+            $new_key=explode(',',preg_replace('/\s+/', '', $key));
+            foreach ($new_key as $itemkey){
+                foreach ($value as $itemvalue){
+                    $new_workers[$itemkey][]=$itemvalue;
+                }
+            }
+            $new_workers[$itemkey]=array_unique($new_workers[$itemkey]);
 
+        }
+
+        $workers=$new_workers;
+        unset($new_workers);
+
+        $new_handlers=[];
+        foreach ($handlers as $key=>&$value){
+            $new_key=explode(',',preg_replace('/\s+/', '', $key));
+            foreach ($new_key as $itemkey){
+                foreach ($value as $itemvalue){
+                    $new_handlers[$itemkey][]=$itemvalue;
+                }
+            }
+            $new_handlers[$itemkey]=array_unique($new_handlers[$itemkey]);
+        }
+        $handlers=$new_handlers;
+        unset($new_handlers);
+
+//        foreach ($listens as $listen){
+//            if (!isset($workers[$listen])){
+//                continue;
+//            }
+//
+//        }
+//        die;
         foreach ($listens as $listen) {
             $this->addMoreWorker($workerNum, function (Process\Pool $pool) use ($workers, $listen,$handlers,$ack) {
-                    $this->logger->info('监听队列：' . $listen . PHP_EOL);
-                    while (true) {
-                        if (!isset($workers[$listen])){
+                $this->logger->info('监听队列：' . $listen . PHP_EOL);
+                while (true) {
+                    if (!isset($workers[$listen])){
 //                            $this->logger->info('队列监听器['.$listen.']不存在，退出['.$listen.']监听' . PHP_EOL);
-                            continue;
-                        }
-                        $queueHandle = $workers[$listen]->reciveMessage($listen);
+                        continue;
+                    }
+                    foreach ($workers[$listen] as $work){
+                        $queueHandle = $work->reciveMessage($listen);
                         foreach ($handlers[$listen] as $handler){
                             if (!class_exists($handler)) {
                                 $this->logger->error("处理器类 {$handler} 不存在");
@@ -62,29 +97,25 @@ trait Queue{
                                 $handler_obj=null;
                             }
                         }
-
-                        if (array_key_exists($listen,$ack)){
-                            foreach ($ack[$listen] as $ackItem){
-                                if (!class_exists($ackItem)) {
-                                    $this->logger->error("确认类 {$ackItem} 不存在");
-                                    continue;
-                                }
-                                $ackItem_obj=new $ackItem();
-                                if ($ackItem_obj instanceof QueueAcknowledge){
-                                    $cid = Coroutine::create(function () use ($listen, $queueHandle, $workers,$ackItem_obj) {
-                                        $ackItem_obj->acknowledgeMessage($listen, $queueHandle);
-                                    });
-                                }else{
-                                    $ackItem_obj=null;
-                                }
+                    }
+                    if (array_key_exists($listen,$ack)){
+                        foreach ($ack[$listen] as $ackItem){
+                            if (!class_exists($ackItem)) {
+                                $this->logger->error("确认类 {$ackItem} 不存在");
+                                continue;
+                            }
+                            $ackItem_obj=new $ackItem();
+                            if ($ackItem_obj instanceof QueueAcknowledge){
+                                $cid = Coroutine::create(function () use ($listen, $queueHandle, $workers,$ackItem_obj) {
+                                    $ackItem_obj->AcknowledgeMessage($listen, $queueHandle);
+                                });
+                            }else{
+                                $ackItem_obj=null;
                             }
                         }
                     }
-                },'queue_server');
+                }
+            },'queue_server');
         }
-
-
-
-
     }
 }
