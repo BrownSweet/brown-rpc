@@ -21,8 +21,8 @@ trait Services
      * @author Brown 2021/12/23 20:19
      */
     public function bindRpcService(){
-        foreach ($this->getConfig('rpc.server.services') as $className){
-            foreach ($className as $className){
+        foreach ($this->getConfig('rpc.server.services') as $services){
+            foreach ($services as $className){
                 try {
                     $reflectionClass = new ReflectionClass($className);
                     $interfaces      = $reflectionClass->getInterfaceNames();
