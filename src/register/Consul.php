@@ -42,7 +42,7 @@ class Consul implements RegisterInterface
         return __CLASS__;
     }
 
-    function register($service, $host, $port, $weight = 1)
+    function register($service, $host, $port,$salt, $weight = 1)
     {
 
         $id = $host . '_' . $port;

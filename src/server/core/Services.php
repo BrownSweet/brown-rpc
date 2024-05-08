@@ -22,14 +22,14 @@ trait Services
      */
     public function bindRpcService(){
         foreach ($this->getConfig('rpc.server.services') as $className){
-            try {
-                $reflectionClass = new ReflectionClass($className);
-                $interfaces      = $reflectionClass->getInterfaceNames();
-            }catch (RpcException $e){
-                throw new RpcException('class is not an object.', ['service' => $className]);
-                $this->logger->error('class is not an object.', ['service' => $className]);
-                return false;
-            }
+            foreach ($className as $className){
+                try {
+                    $reflectionClass = new ReflectionClass($className);
+                    $interfaces      = $reflectionClass->getInterfaceNames();
+                }catch (RpcException $e){
+                    throw new RpcException('class is not an object.', ['service' => $className]);
+                    return false;
+                }
 
                 if (!empty($interfaces)) {
                     foreach ($interfaces as $interface) {
@@ -45,6 +45,7 @@ trait Services
                     ];
                 }
 
+            }
         }
     }
 
@@ -106,9 +107,11 @@ trait Services
             }
 
             $port = $this->getConfig('rpc.server.register.port', 9009);
-            $service_name = $this->getConfig('rpc.server.service_name', 'default');
+            $service = $this->getConfig('rpc.server.service_name', 'default');
             $weight=$this->getConfig('rpc.server.register.weight', '10');
-            $r_c->register($service_name,$host,$port,$weight);
+            foreach ($service as $key=>$service_name){
+                $r_c->register($service_name,$host,$port,$key,$weight);
+            }
             $this->logger->info('服务已注册,登录注册中心查看'.$r_uri);
         }
     }

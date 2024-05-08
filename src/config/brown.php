@@ -15,7 +15,7 @@ return [
             'host'       => '0.0.0.0',
             'port'       => 9009,
             'worker_num' => swoole_cpu_num(),
-            'service_name'=>'default',
+            'service_name'=>['default'],
             'register'=>[
                 'enable'=>false,
                 'class'=>\brown\register\Consul::class,

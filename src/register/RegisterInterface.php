@@ -10,7 +10,7 @@ interface RegisterInterface
 {
    function getName():string;
 
-    function register($module, $host, $port, $weight = 1);
+    function register($service, $host, $port,$salt, $weight = 1);
 
     function unRegister($host, $port);
 
