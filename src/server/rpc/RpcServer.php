@@ -12,6 +12,7 @@ use brown\response\Response;
 use ReflectionClass;
 use ReflectionMethod;
 use Swoole\Coroutine\Server;
+
 use Swoole\Coroutine\Server\Connection;
 use Throwable;
 
@@ -36,7 +37,8 @@ trait RpcServer
 
         $host = $this->getConfig('rpc.server.host', '0.0.0.0');
         $port = $this->getConfig('rpc.server.port', 9009);
-        $protocol=$this->getConfig('rpc.protocol');
+        $protocol=$this->getConfig('rpc.protocol', 'http');
+
         if ($protocol=='http'||$protocol=='https'){
 
             $server = new \Swoole\Coroutine\Http\Server($host, $port,false,true);
@@ -45,16 +47,15 @@ trait RpcServer
                 $request=$serialization->unpack($data);
                 $response->end(serialize($this->doRequest($request)));
             });
-        }else {
+        }else{
             try {
                 $server = new Server($host, $port, false, true);
-            } catch (RpcException $exception) {
+            }catch (RpcException $exception){
                 $this->deregister();
                 throw new RpcException($exception->getMessage());
             }
-
             $server->set($this->options);
-            $server->handle(function (Connection $conn) use ($serialization) {
+            $server->handle(function (Connection $conn)use($serialization) {
                 while (true) {
                     //接收数据
                     $data = $conn->recv(1);
@@ -62,7 +63,7 @@ trait RpcServer
                         $conn->close();
                         break;
                     }
-                    $request = $serialization->unpack($data);
+                    $request=$serialization->unpack($data);
 
                     $conn->send(serialize($this->doRequest($request)));
 
@@ -72,8 +73,12 @@ trait RpcServer
 
                 }
             });
+
+
         }
         $server->start();
+
+
     }
 
     public function doRequest(Request $request):Response{
@@ -95,18 +100,18 @@ trait RpcServer
     {
         return array_reduce(array_reverse($this->middlewares),
             function ($stack, $next) {
-            return function ($request) use ($stack, $next) {
-                if ($next instanceof \Closure) {
-                    return $next($request, $stack);
-                } elseif (is_string($next) && class_exists($next)) {
-                    return (new $next())->handle($request, $stack);
-                } else {
-                    return $next->handle($request, $stack);
-                }
-            };
-        }, function ($request) {
-            return $this->call($request);
-        });
+                return function ($request) use ($stack, $next) {
+                    if ($next instanceof \Closure) {
+                        return $next($request, $stack);
+                    } elseif (is_string($next) && class_exists($next)) {
+                        return (new $next())->handle($request, $stack);
+                    } else {
+                        return $next->handle($request, $stack);
+                    }
+                };
+            }, function ($request) {
+                return $this->call($request);
+            });
     }
 
     public function call(Request $request): Response
@@ -117,40 +122,42 @@ trait RpcServer
         }
         $this->writeFile($request);
         if ($request->getRequest()!='rpc_doc'){
-        $service = $this->services[$request->getRequest()];
-//
-        if (!$service) {
-            $this->logger->debug('service is not exist.', ['service' => $request->getService()]);
-            return Response::error('service is not exist.');
-        }
+            $service = $this->services[$request->getService()][$request->getRequest()];
 
-        $method=$request->getMethod();
-        $reflect = new ReflectionClass($service['class']);
-        $instance = $reflect->newInstanceArgs();
-        if (!method_exists($instance, $method)) {
-            $this->logger->debug('method is not exist.', ['method' => $request->getMethod()]);
-            return Response::error(sprintf('%s method[%s] is not exist.', $service, $method));
-        }
+            if (!$service) {
+                $this->logger->debug('service is not exist.', ['service' => $request->getService()]);
+                return Response::error('service is not exist.');
+            }
+
+            $method=$request->getMethod();
+            $reflect = new ReflectionClass($service['class']);
+            $instance = $reflect->newInstanceArgs();
+            if (!method_exists($instance, $method)) {
+                $this->logger->debug('method is not exist.', ['method' => $request->getMethod()]);
+                return Response::error(sprintf('%s method[%s] is not exist.', $service, $method));
+            }
 
 
-        $ctx = $request->getTraceContext();
+            $ctx = $request->getTraceContext();
 
-        if ($ctx && method_exists($instance, 'setTracerContext')) {
-            $instance->setTracerUrl($ctx->getReporterUrl())->setTracerContext($ctx);
-        }
+            if ($ctx && method_exists($instance, 'setTracerContext')) {
+                $instance->setTracerUrl($ctx->getReporterUrl())->setTracerContext($ctx);
+            }
 
-        try {
-            $methodObj = new ReflectionMethod($reflect->getName(), $method);
-            $result = $methodObj->invokeArgs($instance, $request->getParams());
+            try {
+                $methodObj = new ReflectionMethod($reflect->getName(), $method);
+                $result = $methodObj->invokeArgs($instance, $request->getParams());
 
-        } catch (\Throwable $e) {
+            } catch (\Throwable $e) {
 
-            return Response::error($e->getMessage());
-        }
+                return Response::error($e->getMessage());
+            }
         }else{
-            $result=$this->getInterfaces();
+            $service=$request->getParams()['service'];
+            $result=$this->getInterfaces($service);
 
         }
+
         return Response::success([
             'result' => $result
         ]);
@@ -170,11 +177,12 @@ trait RpcServer
      * 获取接口信息
      * @return array
      */
-    protected function getInterfaces()
+    protected function getInterfaces($service)
     {
         $interfaces = [];
-        foreach ($this->services as $key => ['interface' => $interface]) {
+        foreach ($this->services[$service] as $key => ['interface' =>$interface]) {
             $interfaces[$key] = $this->getMethods($interface);
+
         }
         return $interfaces;
     }

@@ -39,8 +39,9 @@ class RpcDocGenerateor
             if (!file_exists($dir) || !is_dir($dir)) {
                 mkdir($dir,0777,true);
             }
-            $class=(new RpcClient())->Service($service)->request('rpc_doc')->rpc_doc([]);
+            $class=(new RpcClient())->Service($service)->request('rpc_doc')->rpc_doc(['service'=>$service]);
             $result=$class;
+
             $output->writeln('创建目录...');
 
             $output->writeln('正在生成命名空间...');

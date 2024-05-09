@@ -21,32 +21,33 @@ trait Services
      * @author Brown 2021/12/23 20:19
      */
     public function bindRpcService(){
-        foreach ($this->getConfig('rpc.server.services') as $services){
+        foreach ($this->getConfig('rpc.server.services') as $key=>$services){
             foreach ($services as $className){
                 try {
                     $reflectionClass = new ReflectionClass($className);
                     $interfaces      = $reflectionClass->getInterfaceNames();
                 }catch (RpcException $e){
                     throw new RpcException('class is not an object.', ['service' => $className]);
-                    return false;
                 }
 
                 if (!empty($interfaces)) {
                     foreach ($interfaces as $interface) {
-                        $this->services[class_basename($interface)] = [
+                        $this->services[$key][class_basename($interface)] = [
                             'interface' => $interface,
                             'class'     => $className,
+
                         ];
                     }
                 } else {
-                    $this->services[class_basename($className)] = [
+                    $this->services[$key][class_basename($className)] = [
                         'interface' => $className,
                         'class'     => $className,
                     ];
                 }
-
             }
+
         }
+
     }
 
     /**绑定序列化和反序列化
@@ -58,8 +59,8 @@ trait Services
     }
 
     protected function getService(){
-        $this->service=$this->getConfig('rpc.server.services');
-        return $this->service;
+        $this->services=$this->getConfig('rpc.server.services');
+        return $this->services;
     }
 
     protected function addInstance($obj, $prefix = ''){
@@ -105,9 +106,8 @@ trait Services
                 $this->logger->info('检测到开启注册中心，请将host填写为ip地址而非服务监听地址');
                 throw new RpcException('检测到开启注册中心，请将host填写为ip地址而非服务监听地址');
             }
-
-            $port = $this->getConfig('rpc.server.register.port', 9009);
             $service = $this->getConfig('rpc.server.service_name', 'default');
+            $port = $this->getConfig('rpc.server.register.port', 9009);
             $weight=$this->getConfig('rpc.server.register.weight', '10');
             foreach ($service as $key=>$service_name){
                 $r_c->register($service_name,$host,$port,$key,$weight);
