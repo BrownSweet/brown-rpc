@@ -77,13 +77,13 @@ trait Connector
 
         $data=$this->encodeData($request,$this->parser);
         $conn=$this->connect($request->getProtocol());
-        $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
+//        $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
+////
+//        $response = $conn->send($request);
+////
+//        $result = unserialize($response->getBody()->getContents());
 //
-        $response = $conn->send($request);
-//
-        $result = unserialize($response->getBody()->getContents());
-
-        die;
+//        die;
         if ($request->getProtocol()=='http'){
             // 构建HTTP POST请求
             $post_data = $data;
@@ -99,26 +99,26 @@ trait Connector
         }
 
 
-//        if ($conn instanceof \GuzzleHttp\Client){
-//            $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
-//
-//            $response = $conn->send($request);
-//
-//            $result = unserialize($response->getBody()->getContents());
-//        }elseif ($conn instanceof Client){
-//            if (!$data instanceof \Generator){
-//                $data=[$data];
-//            }
-//
-//            foreach ($data as $string) {
-//
-//                if (!empty($string)) {
-//
-//                    if ($conn->send($string) === false) {
-//                        throw new RpcException('Send data failed. ' .  $conn->errCode);
-//                    }
-//                }
-//            }
+        if ($conn instanceof \GuzzleHttp\Client){
+            $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
+
+            $response = $conn->send($request);
+
+            $result = unserialize($response->getBody()->getContents());
+        }elseif ($conn instanceof Client){
+            if (!$data instanceof \Generator){
+                $data=[$data];
+            }
+
+            foreach ($data as $string) {
+
+                if (!empty($string)) {
+
+                    if ($conn->send($string) === false) {
+                        throw new RpcException('Send data failed. ' .  $conn->errCode);
+                    }
+                }
+            }
 //            print_r($data);
 //            die;
         if ($conn->send($data) === false) {
@@ -132,7 +132,7 @@ trait Connector
 
         $result=unserialize($res);
 //            $result=unserialize($conn->recv(65536,Client::MSG_WAITALL));
-//        }
+        }
 
 //        try {
 //            $conn=$this->connect('http');
