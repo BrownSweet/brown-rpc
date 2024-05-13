@@ -21,21 +21,36 @@ trait Connector
     protected $parser;
     public function connect($proto='tcp')
     {
-        if ($this->getConfig('rpc.client.register.enable')){
-            $uri=$this->getConfig('rpc.client.register.uri');
+        $registerEnabled = $this->getConfig('rpc.client.register.enable');
 
-            $Register=$this->getConfig('rpc.client.register.class');
-            $r_w=new $Register($uri);
-            $a=$r_w->getServices($this->services);
-            $host=$a[0]->getHost();
-            $port=$a[0]->getPort();
-        }else{
-            $config=$this->getConfig('rpc.client');
-            if (!isset($config[$this->services])){
+// 尝试从注册中心获取服务信息
+        if ($registerEnabled) {
+            $registerClass = $this->getConfig('rpc.client.register.class');
+            $uri = $this->getConfig('rpc.client.register.uri');
+            $r_w = new $registerClass($uri);
+            $services = $r_w->getServices($this->services);
+
+            // 检查注册中心是否有服务
+            if (count($services) > 0) {
+                $host = $services[0]->getHost();
+                $port = $services[0]->getPort();
+            } else {
+                // 注册中心无服务，使用内置配置
+                $config = $this->getConfig('rpc.client');
+                if (!isset($config[$this->services])) {
+                    throw new RpcException("服务不存在");
+                }
+                $host = $config[$this->services]['host'];
+                $port = $config[$this->services]['port'];
+            }
+        } else {
+            // 注册中心未启用，直接使用内置配置
+            $config = $this->getConfig('rpc.client');
+            if (!isset($config[$this->services])) {
                 throw new RpcException("服务不存在");
             }
-            $host=$config[$this->services]['host'];
-            $port=$config[$this->services]['port'];
+            $host = $config[$this->services]['host'];
+            $port = $config[$this->services]['port'];
         }
 
         $timeout=$this->getConfig('rpc.client.timeout');
