@@ -159,15 +159,15 @@ trait Connector
 //            }
 //            $result=unserialize($conn->recv(65536,Client::MSG_WAITALL));
 //        }
-
-        if (!($result instanceof Response)){
-            throw new RpcException('错误的响应');
-        }
-
-        if ($result->code ==Response::RES_ERROR){
-            throw new RpcException($result->msg);
-        }
-        return $result->data['result'];
+        return $result;
+//        if (!($result instanceof Response)){
+//            throw new RpcException('错误的响应');
+//        }
+//
+//        if ($result->code ==Response::RES_ERROR){
+//            throw new RpcException($result->msg);
+//        }
+//        return $result->data['result'];
     }
 
     protected function encodeData(Request $request,$parser)
