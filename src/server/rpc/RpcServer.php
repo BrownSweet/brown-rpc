@@ -169,7 +169,7 @@ trait RpcServer
             $name = tempnam(sys_get_temp_dir(), 'swoole_rpc_');
             $handle = fopen($name, 'ab');
             fwrite($handle, $value);
-            $params[$index]=$name;
+            $params['file'][$index]=$name;
         }
         $request->setParams($params);
     }

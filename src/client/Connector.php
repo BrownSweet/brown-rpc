@@ -176,13 +176,23 @@ trait Connector
 
         //有文件,先传输
         foreach ($params as $index => $param) {
-            if ($param instanceof FileBase) {
-                $handle = fopen($param->getPathname(), 'rb');
-                $file=[
-                    $index=>  fread($handle, 8192)
-                ];
-                unset($params[$index]);
+            if (is_array($param)){
+                foreach ($param as $key=>$value){
+                    if ($value instanceof FileBase){
+                        $handle = fopen($value->getPathname(), 'rb');
+                        $file[$key]= fread($handle, 8192);
+                        unset($params[$index]);
+                    }
+                }
+            }else{
+                if ($param instanceof FileBase) {
+                    $handle = fopen($param->getPathname(), 'rb');
+                    $file=[
+                        $index=>  fread($handle, 8192)
+                    ];
+                    unset($params[$index]);
 
+                }
             }
         }
         if (isset($file)){
