@@ -102,7 +102,7 @@ trait Connector
         if ($conn instanceof \GuzzleHttp\Client){
             $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
 
-            $response = $conn->send($data);
+            $response = $conn->send($request);
 
             $result = unserialize($response->getBody()->getContents());
         }elseif ($conn instanceof Client){
