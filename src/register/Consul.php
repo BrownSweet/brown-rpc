@@ -45,7 +45,7 @@ class Consul implements RegisterInterface
     function register($service, $host, $port,$salt, $weight = 1)
     {
 
-        $id = $host . '_' . $port;
+        $id = $host . '_' . $port.'_'.$salt;
         /** @var Agent $agent */
         $agent = $this->registerService->get(AgentInterfaceAlias::class);
 

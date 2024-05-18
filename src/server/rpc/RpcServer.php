@@ -42,8 +42,14 @@ trait RpcServer
         if ($protocol=='http'||$protocol=='https'){
 
             $server = new \Swoole\Coroutine\Http\Server($host, $port,false,true);
+            $server->set([
+                'open_http2_protocol' => true,
+                'open_http_protocol' => true,
+            ]);
             $server->handle('/', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response)use ($serialization) {
                 $data = $request->rawContent();
+
+//                die;
                 $request=$serialization->unpack($data);
                 $response->end(serialize($this->doRequest($request)));
             });

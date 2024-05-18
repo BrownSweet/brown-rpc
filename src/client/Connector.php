@@ -84,25 +84,25 @@ trait Connector
 //        $result = unserialize($response->getBody()->getContents());
 //
 //        die;
-        if ($request->getProtocol()=='http'){
-            // 构建HTTP POST请求
-            $post_data = $data;
-            $http_request = "POST / HTTP/1.1\r\n";
-            $http_request .= "Host: www.example.com\r\n";
-            $http_request .= "Content-Type: application/x-www-form-urlencoded\r\n";
-            $http_request .= "Content-Length: " . strlen($post_data) . "\r\n";
-            $http_request .= "Connection: close\r\n";
-            $http_request .= "User-Agent: brown-rpc-client\r\n";
-            $http_request .= "\r\n";
-            $http_request .= $post_data;
-            $data=$http_request;
-        }
+//        if ($request->getProtocol()=='http'){
+//            // 构建HTTP POST请求
+//            $post_data = $data;
+//            $http_request = "POST / HTTP/1.1\r\n";
+//            $http_request .= "Host: www.example.com\r\n";
+//            $http_request .= "Content-Type: application/x-www-form-urlencoded\r\n";
+//            $http_request .= "Content-Length: " . strlen($post_data) . "\r\n";
+//            $http_request .= "Connection: close\r\n";
+//            $http_request .= "User-Agent: brown-rpc-client\r\n";
+//            $http_request .= "\r\n";
+//            $http_request .= $post_data;
+//            $data=$http_request;
+//        }
 
 
         if ($conn instanceof \GuzzleHttp\Client){
             $request = new \GuzzleHttp\Psr7\Request('POST', '/', [], $data);
 
-            $response = $conn->send($request);
+            $response = $conn->send($data);
 
             $result = unserialize($response->getBody()->getContents());
         }elseif ($conn instanceof Client){
