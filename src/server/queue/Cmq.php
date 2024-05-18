@@ -137,7 +137,7 @@ class Cmq implements QueueInterface
         }
 
     }
-    public function reciveMessage($queueName,  array $option = [])
+    public function reciveMessage($queueName,  $params = [])
     {
         // TODO: Implement reciveMessage() method.
 
